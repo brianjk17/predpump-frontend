@@ -2,6 +2,7 @@ import React from "react";
 import { Event } from "../../types/types";
 
 export default function EventCard({ eventData }: { eventData: Event }) {
+  
   function ChoiceButton({ isYes }: { isYes: boolean }) {
     return isYes ? (
       <div className="bg-green-500 w-20 rounded-md flex justify-center items-center">

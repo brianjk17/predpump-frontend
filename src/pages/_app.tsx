@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider>
           <main className="min-w-full flex min-h-screen flex-col">
             <Navbar />
-            <div className="flex-1 px-4 md:px-8 lg:px-16 xl:px-24 bg-slate-500">
+            <div className="flex-1 px-4 md:px-8 lg:px-16 xl:px-24 ">
               <Component {...pageProps} />
             </div>
 
