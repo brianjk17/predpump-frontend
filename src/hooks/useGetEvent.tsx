@@ -10,6 +10,7 @@ export default function useGetEvent() {
     //   choices: ["will trump win?Choice"],
     // } as Event,
     data: {
+      id: "1",
       question: "Jake Paul vs Mike Tyson",
       choices: ["Jake wins?", "Mike Wins?"],
     } as Event,

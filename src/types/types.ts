@@ -1,1 +1,1 @@
-export type Event = { question: string; choices: string[] };
+export type Event = { id: string, question: string; choices: string[] };
