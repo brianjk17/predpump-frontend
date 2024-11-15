@@ -14,10 +14,11 @@ export default function index() {
   }
 
   function confirmMarket() {
-    const marketChoices =
-      choices.length < 2 ? [`${question}Choice`] : [...choices];
-    console.log([question, ...marketChoices]);
-    return [question, ...marketChoices];
+    // const marketChoices =
+    //   choices.length < 2 ? [`${question}Choice`] : [...choices];
+    // console.log([question, ...marketChoices]);
+    // return [question, ...marketChoices];
+    
   }
 
   return (
@@ -37,7 +38,8 @@ export default function index() {
             }}
           />
         </div>
-        {choices.length > 1 &&
+
+        {/* {choices.length > 1 &&
           choices.map((choice, index) => {
             return (
               <div className="text-teal-300 my-2" key={index} >
@@ -53,7 +55,7 @@ export default function index() {
                 />
               </div>
             );
-          })}
+          })} */}
 
         <button onClick={() => addChoice()} className="bg-blue-400 my-4">
           Use 2 Choice
