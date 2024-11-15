@@ -12,6 +12,8 @@ export default function useMyEvents() {
         question: "Jake Paul vs Mike Tyson",
         choices: ["Jake wins?", "Mike Wins?"],
       },
+
+
     ] as Event[],
     refetch: () => {},
     //   useReadContract({

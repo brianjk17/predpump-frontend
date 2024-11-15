@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 const Footer = ({ className }: { className?: string }) => (
-  <footer className="flex w-full justify-center gap-8 border-t p-4">
+  <footer className="flex w-full justify-center gap-8 border-t p-4 z-20">
     <Link
       className="text-base font-bold uppercase opacity-60 transition-all"
       href="https://www..ai"
