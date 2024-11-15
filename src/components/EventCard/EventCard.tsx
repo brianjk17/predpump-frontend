@@ -13,6 +13,7 @@ export default function EventCard({ eventData }: { eventData: Event }) {
       </div>
     );
   }
+
   function Outcomes() {
     return eventData.choices.length > 1 ? (
       <div className="">
@@ -38,6 +39,7 @@ export default function EventCard({ eventData }: { eventData: Event }) {
       </div>
     );
   }
+
   return (
     <div className="bg-white w-[400px] h-[200px] rounded-md flex flex-col p-5 justify-between">
       <div>{eventData.question}</div>

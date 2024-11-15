@@ -1,17 +1,19 @@
 import { useAccount, useReadContract } from "wagmi";
 import { Event } from "../types/types";
 
-export default function useMyEvents() {
+export default function useGetEvent() {
   const { address: ownerAddress, chain } = useAccount();
 
-  const { data: myEvents, refetch: refetchMyEvents } = {
-    data: [
-      { question: "will trump win?", choices: [""] },
-      {
-        question: "Jake Paul vs Mike Tyson",
-        choices: ["Jake wins?", "Mike Wins?"],
-      },
-    ] as Event[],
+  const { data: event, refetch: refetchEvents } = {
+    // data: {
+    //   question: "will trump win?",
+    //   choices: ["will trump win?Choice"],
+    // } as Event,
+    data: {
+      question: "Jake Paul vs Mike Tyson",
+      choices: ["Jake wins?", "Mike Wins?"],
+    } as Event,
+
     refetch: () => {},
     //   useReadContract({
     //     chainId: chain?.id ?? 1,
@@ -23,7 +25,7 @@ export default function useMyEvents() {
   };
 
   return {
-    myEvents,
-    refetchMyEvents,
+    event,
+    refetchEvents,
   };
 }

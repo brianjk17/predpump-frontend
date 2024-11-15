@@ -10,7 +10,7 @@ export default function Navbar() {
       <div>PREDPUMP</div>
       <div className=" flex flex-row justify-center items-center gap-5">
         <div>{Number(userBalance)} USDC</div>
-        <ConnectButton />
+        <ConnectButton showBalance={false} />
       </div>
     </div>
   );
