@@ -26,7 +26,7 @@ const Home: NextPage = () => {
           height={200} // Set the desired height
         />
         <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
-          PumpPredFun
+          PredPumpFun
         </div>
         <Image
           src={gif} // Corrected path without "public"
