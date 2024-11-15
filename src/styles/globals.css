@@ -18,3 +18,14 @@ a {
 * {
   box-sizing: border-box;
 } */
+.press-start-2p-regular {
+  font-family: "Press Start 2P", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  background-color: #022926; /* Replace with your desired color */
+  margin: 0;
+  padding: 0;
+}
