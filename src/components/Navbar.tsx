@@ -13,7 +13,7 @@ export default function Navbar() {
         <Link href="/profile">[View Profile]</Link>
         <Link href="/">[Create Bets]</Link>
         <div>[{Number(userBalance)} USDC]</div>
-        <ConnectButton />
+        <ConnectButton showBalance={false} />
       </div>
     </div>
   );
