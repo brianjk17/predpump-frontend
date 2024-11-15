@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import React, { useEffect, useState } from "react";
-import useGetEvent from "../../hooks/useGetEvent";
+import { useGetEvent } from "../../hooks/useGetEvent";
 
 interface OutcomeData {
   id: string;
