@@ -2,7 +2,6 @@
 import type { NextPage } from "next";
 import React from "react";
 import { Boxes } from "../components/ui/background-boxes";
-import { cn } from "../../lib/utils";
 import Image from "next/image";
 import gif from "../public/pepe-gif.gif";
 import EventCard from "../components/EventCard/EventCard";
