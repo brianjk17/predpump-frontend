@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import React, { useEffect, useState } from "react";
+import { useGetAllEvents } from "../../hooks/useGetAllEvent";
+import { useRouter } from "next/router";
 import { useGetEvent } from "../../hooks/useGetEvent";
 
 interface OutcomeData {
@@ -14,7 +16,9 @@ interface OutcomeData {
 }
 
 const event = () => {
-  const { event } = useGetEvent();
+  const router = useRouter();
+  const {id}=router.query
+  const { event } = useGetEvent(id as string);
 
   const [choice, setChoice] = useState(""); //
   const [isBuy, setIsBuy] = useState(true); //buy or sell

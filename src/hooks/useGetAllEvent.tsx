@@ -1,10 +1,10 @@
 import { useAccount, useReadContract } from "wagmi";
 import { Event } from "../types/types";
 
-export default function useMyEvents() {
+export const useGetAllEvents = () => { 
   const { address: ownerAddress, chain } = useAccount();
 
-  const { data: myEvents, refetch: refetchMyEvents } = {
+  const { data: allEvents, refetch: refetchMyEvents } = {
     data: [
       { id: "1", question: "will trump win?", choices: [""] },
       {
@@ -12,12 +12,17 @@ export default function useMyEvents() {
         question: "Jake Paul vs Mike Tyson",
         choices: ["Jake wins?", "Mike Wins?"],
       },
+      {
+        id: "3",
+        question: "hey vs Mike Tyson",
+        choices: ["hey wins?", "Mike Wins?"],
+      },
     ] as Event[],
     refetch: () => {},
   };
 
   return {
-    myEvents,
+    allEvents,
     refetchMyEvents,
   };
 }
