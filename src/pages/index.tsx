@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-      <div className="flex gap-7 mt-14">
+      <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
         {allEvents.map((event) => (
           <Link href={`/event/${event.id}`} key={event.id}>
               <EventCard eventData={event} />

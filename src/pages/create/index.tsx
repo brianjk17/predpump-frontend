@@ -21,10 +21,10 @@ export default function index() {
 
   return (
     <div>
-      <div>create</div>
+      <div className="text-white">create</div>
       <div className="flex flex-col justify-center items-center">
-        <div>
-          question{" "}
+        <div className="text-teal-300">
+          question: {" "}
           <input
             type="text"
             value={question}
@@ -36,7 +36,7 @@ export default function index() {
         {choices.length > 1 &&
           choices.map((choice, index) => {
             return (
-              <div key={index}>
+              <div className="text-teal-300 my-2" key={index} >
                 choice {index + 1} {""}
                 <input
                   type="text"
@@ -51,7 +51,7 @@ export default function index() {
             );
           })}
 
-        <button onClick={() => addChoice()} className="bg-blue-400">
+        <button onClick={() => addChoice()} className="bg-blue-400 my-4">
           Use 2 Choice
         </button>
 
