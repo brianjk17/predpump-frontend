@@ -1,7 +1,7 @@
 // index.tsx
 import type { NextPage } from "next";
 import React from "react";
-import { Boxes } from "./components/ui/background-boxes";
+import { Boxes } from "../components/ui/background-boxes";
 import { cn } from "../../lib/utils";
 import Image from "next/image";
 import gif from "../public/pepe-gif.gif";
@@ -16,7 +16,7 @@ const Home: NextPage = () => {
     <>
       <div className="h-full relative w-full overflow-hidden bg-darkgreen items-center flex justify-center rounded-lg">
         <div className="absolute inset-0 w-full h-full bg-darkgreen [mask-image:radial-gradient(transparent,white)] pointer-events-none z-0" />
-        
+
         <Boxes className="h-auto" />
 
         {/* Flex container for "hey" elements and PredPumpFun */}
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
       <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
         {allEvents.map((event) => (
           <Link href={`/event/${event.id}`} key={event.id}>
-              <EventCard eventData={event} />
+            <EventCard eventData={event} />
           </Link>
         ))}
       </div>
