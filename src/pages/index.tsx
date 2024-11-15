@@ -23,7 +23,7 @@ const Home: NextPage = () => {
         <div className="flex items-center justify-center space-x-4 mt-48 z-10">
           <Image src={gif} alt="Animated GIF" width={200} height={200} />
           <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
-            PredPumpFun
+            PredPump
           </div>
           <Image src={gif} alt="Animated GIF" width={200} height={200} />
         </div>

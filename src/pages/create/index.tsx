@@ -1,3 +1,4 @@
+import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
 
 export default function index() {
@@ -23,13 +24,16 @@ export default function index() {
     <div>
       <div className="text-white">create</div>
       <div className="flex flex-col justify-center items-center">
-        <div className="text-teal-300">
-          question: {" "}
-          <input
-            type="text"
+        <div className="text-teal-300 my-2">
+          <TextField
+            id="outlined-controlled"
+            focused
+            variant="filled"
+            label="Title: "
             value={question}
+            color="success"
             onChange={(e) => {
-              setQuestion(e.target.value);
+            setQuestion(e.target.value);
             }}
           />
         </div>

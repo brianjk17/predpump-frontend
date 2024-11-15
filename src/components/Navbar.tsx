@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <div className="flex flex-row justify-between items-center px-5 bg-darkgreen p-2 z-20">
-      <div>PREDPUMP</div>
+      <div className="text-white press-start-2p-regular">PREDPUMP</div>
       <div className=" flex flex-row justify-center items-center gap-5 text-teal-300">
         <Link href="/profile">[View Profile]</Link>
         <Link href="/create">[Create Bets]</Link>
