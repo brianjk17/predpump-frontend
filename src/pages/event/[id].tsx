@@ -221,8 +221,10 @@ const event = () => {
 
       const conditionalToken = await fpmm.conditionalTokens();
       const indexSets = [BigInt(1), BigInt(2)];
+      
+      const conditionalTokens = new ethers.Contract(conditionalToken, ConditionalTokensABI.abi, provider);
 
-      const conditionalId = await fpmm.getConditionId(deployer, questionId, 2);
+      const conditionalId = await conditionalTokens.getConditionId(deployer, questionId, 2);
 
       await writeRedeemContract({
         address: conditionalToken as `0x${string}`,
