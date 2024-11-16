@@ -166,9 +166,8 @@ export default function index() {
           />
         </div>
 
-        <Button
-          variant="contained"
-          className=" text-black hover:bg-teal-700 hover:text-white"
+        <button
+          className="bg-teal-300 text-black hover:bg-teal-700 hover:text-white p-2 rounded-lg"
           onClick={handleDeployPrediction}
           disabled={
             isPending || isStoringData || !selectedDate || question.length < 1
@@ -179,7 +178,8 @@ export default function index() {
             : isStoringData
             ? "Storing data..."
             : "Create Prediction Market"}
-        </Button>
+        </button>
+
         {isConfirming && hash && (
           <div>
             <div>Waiting for confirmation...</div>

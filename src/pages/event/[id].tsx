@@ -264,7 +264,10 @@ const event = () => {
     <div className="flex flex-col items-center justify-center mt-10">
       <div className=" flex flex-col justify-between gap-5">
         <div className=" bg-teal-300 rounded-lg p-2">
-          <h1 className="text-xl pb-5 press-start-2p-regular">{title} </h1>
+        <h1 className="text-xl pb-5 press-start-2p-regular rainbow-gradient md:text-2xl">
+          {title}
+        </h1>
+
 
           <MarketDataDisplay marketAddress={id as `0x${string}`} />
         </div>
@@ -337,7 +340,7 @@ const event = () => {
             <button
               className={`w-full py-2 rounded ${
                 isBuy
-                  ? "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-teal-300 hover:bg-teal-600 text-black"
                   : "bg-red-500 hover:bg-red-600"
               }`}
               disabled={!amount || amount === "0" || isPending || isConfirming}
