@@ -9,7 +9,15 @@ import { useGetAllEvents } from "../hooks/useGetAllEvent";
 import Link from "next/link";
 
 const Home: NextPage = () => {
-  const { allEvents } = useGetAllEvents();
+  const { allEvents, isLoading, error } = useGetAllEvents();
+
+  if (isLoading) {
+    return <div>Loading events...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
@@ -29,11 +37,15 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
-        {allEvents.map((event) => (
-          <Link href={`/event/${event.id}`} key={event.id}>
-            <EventCard eventData={event} />
-          </Link>
-        ))}
+        {allEvents.length === 0 ? (
+          <div>No events found</div>
+        ) : (
+          allEvents.map((event) => (
+            <Link href={`/event/${event.address}`} key={event.address}>
+              <EventCard eventData={event} />
+            </Link>
+          ))
+        )}
       </div>
     </>
   );
