@@ -30,5 +30,16 @@ export const handleCheckCanResolve = async (
 
   const canResolve = await conditionalTokens.canReport(conditionalId);
 
+  const conditionalId2 = await conditionalTokens.getConditionId(
+    deployer,
+    questionId,
+    outcomeSlots
+  );
+
+  const info = await conditionalTokens.conditionInfo(conditionalId2);
+  console.log("info", info)
+
+
+
   return canResolve;
 };

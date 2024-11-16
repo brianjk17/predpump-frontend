@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useGetEvent } from "../../hooks/useGetEvent";
 import {
+  useAccount,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
@@ -221,10 +222,18 @@ const event = () => {
 
       const conditionalToken = await fpmm.conditionalTokens();
       const indexSets = [BigInt(1), BigInt(2)];
-      
-      const conditionalTokens = new ethers.Contract(conditionalToken, ConditionalTokensABI.abi, provider);
 
-      const conditionalId = await conditionalTokens.getConditionId(deployer, questionId, 2);
+      const conditionalTokens = new ethers.Contract(
+        conditionalToken,
+        ConditionalTokensABI.abi,
+        provider
+      );
+
+      const conditionalId = await conditionalTokens.getConditionId(
+        deployer,
+        questionId,
+        2
+      );
 
       await writeRedeemContract({
         address: conditionalToken as `0x${string}`,
@@ -262,21 +271,24 @@ const event = () => {
     fetchMarket();
   }, [router.query.id]);
 
+  const { address } = useAccount();
+
+
   return (
     <div className="flex flex-col items-center justify-center mt-10 ">
       <div className=" flex flex-col justify-between gap-5">
         <div className="flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
-        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-center mb-10 animate-bounce
-                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white">
-          {title}
-        </h1>
-
+          <h1
+            className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-center mb-10 animate-bounce
+                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white"
+          >
+            {title}
+          </h1>
 
           <MarketDataDisplay marketAddress={id as `0x${string}`} />
         </div>
 
         <div className="min-w-[23rem]flex-col flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
-
           <h1 className="text-xl mt-4 press-start-2p-regular">Outcome: </h1>
           <div className="w-full justify-center items-center flex gap-2">
             <button
@@ -347,9 +359,40 @@ const event = () => {
                   : "bg-red-500 hover:bg-red-600"
               }`}
               disabled={!amount || amount === "0" || isPending || isConfirming}
-              onClick={() =>
-                handleBuy(writeContract, id as `0x${string}`, position, amount)
-              }
+              onClick={async () => {
+                try {
+                  // Get user's wallet address (assuming you're using wagmi)
+
+                  if (!address) {
+                    // Handle case where user is not connected
+                    return;
+                  }
+
+                  // First execute the contract transaction
+                  await handleBuy(
+                    writeContract,
+                    id as `0x${string}`,
+                    position,
+                    amount
+                  );
+
+                  // Then write to Supabase buys table
+                  const { error } = await supabase.from("buys").insert({
+                    user_address: address,
+                    fpmm_address: id,
+                    position: position,
+                    amount: amount,
+                  });
+
+                  if (error) {
+                    console.error("Error writing to Supabase:", error);
+                    // Handle error appropriately in your UI
+                  }
+                } catch (error) {
+                  console.error("Transaction error:", error);
+                  // Handle error appropriately in your UI
+                }
+              }}
             >
               {isPending || isConfirming
                 ? "Confirming..."
@@ -357,8 +400,8 @@ const event = () => {
                     position === 1 ? "Yes" : "No"
                   }`}
             </button>
-            </div>
           </div>
+        </div>
       </div>
 
       {canRedeem && (
