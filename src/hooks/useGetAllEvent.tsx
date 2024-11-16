@@ -15,7 +15,7 @@ export const useGetAllEvents = () => {
       const { data, error } = await supabase
         .from("events")
         .select("*")
-        .is("resolved", null);
+        .is("resolved", false);
 
       if (error) {
         throw error;

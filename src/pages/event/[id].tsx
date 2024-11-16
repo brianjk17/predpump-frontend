@@ -382,9 +382,6 @@ const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }));
 };
 
-  const { address } = useAccount();
-
-
   return (
     <div className="flex flex-col items-center justify-center mt-10 ">
       <div className=" flex flex-col justify-between gap-5">
