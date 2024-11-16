@@ -29,4 +29,27 @@ body {
   margin: 0;
   padding: 0;
 }
+@keyframes bounceAndRainbow {
+  0%, 100% {
+    transform: translateY(-80%);
+    background-position: 0% 50%;
+    animation-timing-function: ease-in-out;
+  }
+  50% {
+    transform: translateY(0);
+    background-position: 100% 50%;
+    animation-timing-function: ease-in-out;
+  }
+}
 
+.rainbow-tail {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 300% 300%;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: bounceAndRainbow 3s infinite ease-in-out;
+}
