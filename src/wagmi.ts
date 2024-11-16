@@ -51,6 +51,7 @@ export const config = getDefaultConfig({
     scrollSepolia,
     morphHolesky,
     sepolia,
+    arbitrumSepolia
   ],
   ssr: true,
 });
