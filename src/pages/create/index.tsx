@@ -93,7 +93,7 @@ const [pushUser, setPushUser] = useState<PushAPI | null>(null);
           address as `0x${string}`, // oracle - address
           questionId as `0x${string}`, // questionId - bytes32
           BigInt(2), // outcomeSlotCount - uint256
-          BigInt(epochSeconds + 10000), // endTime - uint256
+          BigInt(epochSeconds + 60), // endTime - uint256
           BigInt(2), // fee - uint256
         ],
       });
