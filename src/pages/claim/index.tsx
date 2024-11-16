@@ -36,7 +36,7 @@ const RedeemPayouts = () => {
       // Create index sets for both positions
       const indexSets = [BigInt(1), BigInt(2)]; // [1, 2] for binary outcomes
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.providers.JsonRpcProvider(window.ethereum);
             const signer = provider.getSigner();
       
             const fpmm = new ethers.Contract(

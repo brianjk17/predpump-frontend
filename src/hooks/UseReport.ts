@@ -4,7 +4,7 @@ import ConditionalTokensABI from "../contracts/ctf/ConditionalTokens.json"
 
 export const handleReport = async(address: string, questionId: string, resultIndex: number) => {
     // Initialize provider and signer
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.providers.JsonRpcProvider(window.ethereum);
     const signer = await provider.getSigner();
 
     // Initialize FPMM contract
