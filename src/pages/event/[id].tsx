@@ -264,32 +264,33 @@ const event = () => {
     <div className="flex flex-col items-center justify-center mt-10">
       <div className=" flex flex-col justify-between gap-5">
         <div className=" bg-teal-300 rounded-lg p-2">
-          <h1 className="text-xl pb-5 press-start-2p-regular">{title} </h1>
+        <h1 className="text-xl pb-5 press-start-2p-regular rainbow-gradient md:text-2xl">
+          {title}
+        </h1>
+
 
           <MarketDataDisplay marketAddress={id as `0x${string}`} />
         </div>
 
         <div className="bg-teal-300 rounded-md p-2 min-w-[23rem] flex flex-col">
           <div className="bg-white rounded-lg p-2 flex flex-col">
-          <h1 className="text-xl mt-4">Outcome: </h1>
+          <h1 className="text-xl mt-4 press-start-2p-regular">Outcome: </h1>
           <div className="w-full justify-center items-center flex gap-2">
-            <Button
-              variant="contained"
+            <button
               onClick={() => setPosition(1)}
-              className={`text-black px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 w-1/2`}
+              className={`text-black px-4 py-2 rounded bg-teal-300 hover:bg-teal-700 hover:text-white w-1/2`}
             >
               Yes
-            </Button>
-            <Button
-              variant="contained"
+            </button>
+            <button
               onClick={() => setPosition(0)}
-              className="bg-red-500 hover:bg-red-600 text-black px-4 py-2 rounded w-1/2"
+              className="bg-teal-300 hover:bg-teal-700 hover:text-white text-black px-4 py-2 rounded w-1/2"
             >
               No
-            </Button>
+            </button>
           </div>
 
-          <h1 className="text-xl mt-4">Amount: </h1>
+          <h1 className="text-xl mt-4 press-start-2p-regular">Amount: </h1>
 
           <input
             type="text"
@@ -330,17 +331,16 @@ const event = () => {
             )}
             <button
               onClick={handleApprove}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-teal-300 text-black px-4 py-2 rounded"
             >
               {isPendingApprove ? "Confirming..." : "Approve"}
             </button>
             <br />
             <br />
-            <Button
-              variant="contained"
+            <button
               className={`w-full py-2 rounded ${
                 isBuy
-                  ? "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-teal-300 hover:bg-teal-600 text-black"
                   : "bg-red-500 hover:bg-red-600"
               }`}
               disabled={!amount || amount === "0" || isPending || isConfirming}
@@ -353,7 +353,7 @@ const event = () => {
                 : `Confirm ${isBuy ? "Buy" : "Sell"} ${
                     position === 1 ? "Yes" : "No"
                   }`}
-            </Button>
+            </button>
             </div>
           </div>
         </div>
