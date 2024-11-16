@@ -2,6 +2,7 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import {
   Chain,
   arbitrum,
+  arbitrumSepolia,
   base,
   mainnet,
   optimism,
@@ -30,6 +31,7 @@ export const config = getDefaultConfig({
   chains: [
     anvil,
     sepolia,
+    arbitrumSepolia
   ],
   ssr: true,
 });

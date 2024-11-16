@@ -59,7 +59,7 @@ const event = () => {
 
    // Calculate buy amount based on current input
    const { data: calculatedBuyAmount, isError } = useReadContract({
-    address: "0x8ff3801288a85ea261e4277d44e1131ea736f77b" as `0x${string}`,
+    address: "0x569213644d0b75681994af0786de877fd993a977" as `0x${string}`,
     abi: FpmmABI,
     functionName: "calcBuyAmount",
     args: amount && amount !== "0" ? [
@@ -75,7 +75,7 @@ const event = () => {
       address: TOKEN_CONTRACT.address,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "approve",
-      args: ["0x8ff3801288a85ea261e4277d44e1131ea736f77b", amounts],
+      args: ["0x569213644d0b75681994af0786de877fd993a977", amounts],
     });
   }
 
@@ -281,7 +281,7 @@ const event = () => {
                 : "bg-red-500 hover:bg-red-600"
             }`}
             disabled={!amount || amount === "0" || isPending || isConfirming}
-            onClick={() => handleBuy(writeContract, "0x8ff3801288a85ea261e4277d44e1131ea736f77b", position, amount)}
+            onClick={() => handleBuy(writeContract, "0x569213644d0b75681994af0786de877fd993a977", position, amount)}
           >
             {isPending || isConfirming ? "Confirming..." : `Confirm ${isBuy ? "Buy" : "Sell"} ${position === 1 ? "Yes" : "No"}`}
           </Button>
