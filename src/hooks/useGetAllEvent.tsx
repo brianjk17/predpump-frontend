@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { Event } from "../types/types";
 import { supabase } from "../lib/supabaseClient";
+import { useAccount } from "wagmi";
 
 export const useGetAllEvents = () => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { chainId } = useAccount();
 
   const fetchEvents = async () => {
     try {
@@ -15,7 +17,8 @@ export const useGetAllEvents = () => {
       const { data, error } = await supabase
         .from("events")
         .select("*")
-        .is("resolved", null);
+        .is("resolved", null)
+        .eq("chainId", chainId);
 
       if (error) {
         throw error;
@@ -42,8 +45,8 @@ export const useGetAllEvents = () => {
   };
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
+    if (chainId) fetchEvents();
+  }, [chainId]);
 
   return {
     allEvents,

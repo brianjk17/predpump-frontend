@@ -6,7 +6,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { FACTORY_CONTRACT, TOKEN_CONTRACT } from "../../contracts";
+import { FACTORY_CONTRACT } from "../../contracts";
 import { Abi, keccak256 } from "viem";
 import { encodeAbiParameters } from "viem";
 import { supabase } from "../../lib/supabaseClient";
@@ -16,6 +16,8 @@ import dayjs, { Dayjs } from "dayjs";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CHAINS_CONFIG } from "../../constants/chains";
+import { useFactoryContract } from "../../hooks/contracts/useFactoryContract";
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -24,8 +26,10 @@ export default function index() {
   const [fpmmAddress, setFpmmAddress] = useState<string>("");
   const [isStoringData, setIsStoringData] = useState(false);
   const [isMounted, setIsMounted] = useState(false); // Flag to track if the component has mounted
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
+
+  const { address: factoryContractAddress } = useFactoryContract(chainId ?? 1);
 
   const router = useRouter();
 
@@ -39,7 +43,6 @@ export default function index() {
 
   useEffect(() => {
     if (isConfirmed) {
-      // Trigger confetti on success
       confetti({
         particleCount: 100,
         spread: 70,
@@ -54,20 +57,19 @@ export default function index() {
     setSelectedDate(dayjs(new Date()));
   }, []);
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
-    dayjs().add(10, "day")
-  );
-  console.log(dayjs().add(10, "day"));
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
 
   function handleDeployPrediction() {
     if (selectedDate) {
       const epochSeconds = selectedDate.unix();
+      console.log(epochSeconds);
       writeContract({
-        address: FACTORY_CONTRACT.address,
+        address: factoryContractAddress,
         abi: FACTORY_CONTRACT.abi as Abi,
         functionName: "createFPMM",
         args: [
-          TOKEN_CONTRACT.address as `0x${string}`, // collateralToken - address
+          CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+            .token_address, // collateralToken - address
           address as `0x${string}`, // oracle - address
           questionId as `0x${string}`, // questionId - bytes32
           BigInt(2), // outcomeSlotCount - uint256
@@ -87,6 +89,7 @@ export default function index() {
           fpmm_title: question,
           deployer: address,
           questionId: questionId,
+          chainId: chainId,
         },
       ]);
 
@@ -137,10 +140,17 @@ export default function index() {
 
   return (
     <div className="flex flex-col justify-center items-center  min-h-[50vh]">
-      <div className="press-start-2p-regular text-xl md:text-4xl items-center justify-center  font-extrabold text-center mb-10 animate-bounce
-                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white">Create a Prediction Market</div>
+      <div
+        className="press-start-2p-regular text-xl md:text-4xl items-center justify-center  font-extrabold text-center mb-10 animate-bounce
+                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white"
+      >
+        Create a Prediction Market
+      </div>
       <div className="flex flex-col justify-center items-center bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl">
-        <div className="press-start-2p-regular text-xl"> Predict the future, earn more, rule the markets!</div>
+        <div className="press-start-2p-regular text-xl">
+          {" "}
+          Predict the future, earn more, rule the markets!
+        </div>
         <div className="text-teal-300 my-2 bg-slate-50 w-full">
           <TextField
             id="outlined-controlled"
@@ -186,11 +196,13 @@ export default function index() {
           <div className="m-2">
             <div>Waiting for confirmation...</div>
             <Link
-              href={`https://arbitrum-sepolia.blockscout.com/tx/${hash}`}
+              href={`${
+                CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].scan
+              }tx/${hash}`}
               target="_blank"
               className="underline"
             >
-              View tx Hash: {hash.slice(0, 5)}
+              View tx Hash: {hash.slice(0, 10)}...{hash.slice(0, -5)}
             </Link>
           </div>
         )}
@@ -218,47 +230,47 @@ export default function index() {
       </div>
 
       {isConfirmed && selectedDate && (
-<div className="flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
-  {/* Card */}
-  <div
-    className="flex flex-col justify-center items-center bg-green-800/50 w-full md:w-[500px] rounded-md p-5 mt-10"
-    onClick={() => router.push(`/profile/${fpmmAddress}`)}
-  >
-    {/* Title */}
-    <div className="press-start-2p-regular text-center text-lg sm:text-xl md:text-2xl">
-      Prediction Market Created
-    </div>
+        <div className="flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
+          {/* Card */}
+          <div
+            className="flex flex-col justify-center items-center bg-green-800/50 w-full md:w-[500px] rounded-md p-5 mt-10"
+            onClick={() => router.push(`/profile/${fpmmAddress}`)}
+          >
+            {/* Title */}
+            <div className="press-start-2p-regular text-center text-lg sm:text-xl md:text-2xl">
+              Prediction Market Created
+            </div>
 
-    {/* Question Section */}
-    <div className="mt-4 text-center">
-      <div className="bg-white/10 p-3 rounded-lg text-sm sm:text-base md:text-lg">
-        {question}
-      </div>
-      <div className="mt-2 text-sm sm:text-base md:text-lg">
-        End Date: {selectedDate.format("MMMM D, YYYY h:mm A")}
-      </div>
-    </div>
+            {/* Question Section */}
+            <div className="mt-4 text-center">
+              <div className="bg-white/10 p-3 rounded-lg text-sm sm:text-base md:text-lg">
+                {question}
+              </div>
+              <div className="mt-2 text-sm sm:text-base md:text-lg">
+                End Date: {selectedDate.format("MMMM D, YYYY h:mm A")}
+              </div>
+            </div>
 
-    {/* Button */}
-    <Button
-      onClick={() => router.push(`/profile/${fpmmAddress}`)}
-      className="mt-6 px-4 py-2 text-sm sm:text-base md:text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-    >
-      Proceed to Approve
-    </Button>
-  </div>
+            {/* Button */}
+            <Button
+              onClick={() => router.push(`/profile/${fpmmAddress}`)}
+              className="mt-6 px-4 py-2 text-sm sm:text-base md:text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+            >
+              Proceed to Approve
+            </Button>
+          </div>
 
-  {/* Link Section */}
-  <div className="mt-6 w-full text-center">
-    <Link
-      href={`https://arbitrum-sepolia.blockscout.com/address/${fpmmAddress}`}
-      target="_blank"
-      className="underline text-white text-sm sm:text-base md:text-lg"
-    >
-      View Contract on Explorer
-    </Link>
-  </div>
-</div>
+          <Link
+            // href={`${CHAINS_CONFIG[chainId]?}address/${fpmmAddress}`}
+            href={`${
+              CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].scan
+            }address/${fpmmAddress}`}
+            target="_blank"
+            className="underline text-white"
+          >
+            View Contract on Explorer
+          </Link>
+        </div>
       )}
     </div>
   );

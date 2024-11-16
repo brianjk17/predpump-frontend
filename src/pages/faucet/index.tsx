@@ -6,17 +6,21 @@ import {
 } from "wagmi";
 import { TOKEN_CONTRACT } from "../../contracts";
 import { Abi } from "viem";
+import { CHAINS_CONFIG } from "../../constants/chains";
 
 const index = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
+
   function handleMint() {
     writeContract({
-      address: TOKEN_CONTRACT.address,
+      address:
+        CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+          .token_address,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "mint",
       args: [address, 1000000000000000000000],
