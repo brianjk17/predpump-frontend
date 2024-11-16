@@ -10,7 +10,7 @@ export const CHAINS_CONFIG = {
   },
   // base
   [84532]: {
-    scan: "https://arbitrum-sepolia.blockscout.com/",
+    scan: "https://base-sepolia.blockscout.com/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_BASE as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_BASE as `0x${string}`,

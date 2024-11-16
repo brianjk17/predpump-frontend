@@ -11,6 +11,7 @@ import { Abi } from "viem";
 import fpmmAbi from "../../../contracts/fpmm/fpmmAbi.json";
 import { handleCheckCanResolve } from "../../../hooks/useCheckCanResolve";
 import { handleReport } from "../../../hooks/UseReport";
+import { useGetTokenContract } from "../../../hooks/contracts/useGetTokenContract";
 
 interface Event {
   id: number;
@@ -24,11 +25,15 @@ interface Event {
 const Index = () => {
   const router = useRouter();
   const { fpmmAddress } = router.query;
+
   const [eventData, setEventData] = useState<Event | null>(null);
   const [funding, setFunding] = useState<string>("");
   const [canResolve, setCanResolve] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
-  const { address } = useAccount(); // Add this to check if user is the deployer
+  const { address, chainId } = useAccount(); // Add this to check if user is the deployer
+  const { address: tokenContractAddress } = useGetTokenContract(
+    Number(chainId)
+  );
 
   const {
     data: hashApprove,
@@ -43,7 +48,7 @@ const Index = () => {
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
     writeContractApprove({
-      address: TOKEN_CONTRACT.address,
+      address: tokenContractAddress,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "approve",
       args: [eventData!.fpmm_address, amount],

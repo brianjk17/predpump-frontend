@@ -6,7 +6,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { FACTORY_CONTRACT, TOKEN_CONTRACT } from "../../contracts";
+import { FACTORY_CONTRACT } from "../../contracts";
 import { Abi, keccak256 } from "viem";
 import { encodeAbiParameters } from "viem";
 import { supabase } from "../../lib/supabaseClient";
@@ -43,7 +43,6 @@ export default function index() {
 
   useEffect(() => {
     if (isConfirmed) {
-      // Trigger confetti on success
       confetti({
         particleCount: 100,
         spread: 70,
@@ -58,17 +57,12 @@ export default function index() {
     setSelectedDate(dayjs(new Date()));
   }, []);
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
-    dayjs().add(10, "day")
-  );
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
 
-  // console.log(
-  //   CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
-  //     .token_address
-  // );
   function handleDeployPrediction() {
     if (selectedDate) {
       const epochSeconds = selectedDate.unix();
+      console.log(epochSeconds);
       writeContract({
         address: factoryContractAddress,
         abi: FACTORY_CONTRACT.abi as Abi,
