@@ -1,11 +1,10 @@
-import { ZeroAddress } from "ethers";
 import { CHAINS_CONFIG } from "../../constants/chains";
 import { TOKEN_CONTRACT } from "../../contracts";
 import { useEffect, useState } from "react";
 
 export const useFactoryContract = (chainId: number) => {
   const [contractAddress, setContractAddress] = useState<`0x${string}`>(
-    ZeroAddress as `0x${string}`
+    "0x0000000000000000000000000000000000000000" as `0x${string}`
   );
 
   useEffect(() => {
@@ -16,7 +15,9 @@ export const useFactoryContract = (chainId: number) => {
         chainConfig.contractAddress.factory_address as `0x${string}`
       );
     } else {
-      setContractAddress(ZeroAddress as `0x${string}`);
+      setContractAddress(
+        "0x0000000000000000000000000000000000000000" as `0x${string}`
+      );
     }
   }, [chainId]);
 

@@ -45,7 +45,7 @@ export const config = getDefaultConfig({
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
   chains: [
     baseSepolia,
-    chiliz
+    chiliz,
     neonDevnet,
     mantleSepoliaTestnet,
     flowTestnet,

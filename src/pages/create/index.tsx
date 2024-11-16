@@ -102,46 +102,46 @@ export default function index() {
   }
 
   // Modify the storeEventData function
-async function storeEventData(fpmmAddress: string, question: string) {
-  try {
-    setIsStoringData(true);
+  async function storeEventData(fpmmAddress: string, question: string) {
+    try {
+      setIsStoringData(true);
 
-    // Create Push Group
-    let groupId = null;
-    if (pushUser) {
-      try {
-        const newGroup = await pushUser.chat.group.create(
-          `Market: ${question.slice(0, 30)}...`, // Group name
-          {
-            description: `${question}`,
-            image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABA...", // Your base64 image
-            members: [], // You can add members here if needed
-            private: false,
-            rules: {
-              entry: { conditions: [] },
-              chat: { conditions: [] }
+      // Create Push Group
+      let groupId = null;
+      if (pushUser) {
+        try {
+          const newGroup = await pushUser.chat.group.create(
+            `Market: ${question.slice(0, 30)}...`, // Group name
+            {
+              description: `${question}`,
+              image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABA...", // Your base64 image
+              members: [], // You can add members here if needed
+              private: false,
+              rules: {
+                entry: { conditions: [] },
+                chat: { conditions: [] },
+              },
             }
-          }
-        );
-        
-        console.log('Created Push group:', newGroup);
-        groupId = newGroup.chatId;
-      } catch (error) {
-        console.error('Error creating Push group:', error);
-      }
-    }
+          );
 
-    // Store in Supabase with groupId
-    const { data, error } = await supabase.from("events").insert([
-      {
-        fpmm_address: fpmmAddress,
-        fpmm_title: question,
-        deployer: address,
-        questionId: questionId,
-        push_group_id: groupId // Add this new field
+          console.log("Created Push group:", newGroup);
+          groupId = newGroup.chatId;
+        } catch (error) {
+          console.error("Error creating Push group:", error);
+        }
+      }
+
+      // Store in Supabase with groupId
+      const { data, error } = await supabase.from("events").insert([
+        {
+          fpmm_address: fpmmAddress,
+          fpmm_title: question,
+          deployer: address,
+          questionId: questionId,
+          push_group_id: groupId, // Add this new field
           chainId: chainId,
-      },
-    ]);
+        },
+      ]);
 
       if (error) throw error;
       console.log("Stored event data successfully");
