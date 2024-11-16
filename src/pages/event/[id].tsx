@@ -1,37 +1,82 @@
 import { Button } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import React, { useEffect, useState } from "react";
-import { useGetAllEvents } from "../../hooks/useGetAllEvent";
 import { useRouter } from "next/router";
 import { useGetEvent } from "../../hooks/useGetEvent";
-import { Config, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { WriteContractMutate } from "wagmi/query";
+import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import FpmmABI from "../../contracts/fpmm/fpmmAbi.json"
 import { handleBuy } from "../../hooks/useBuy";
 import { Abi, formatUnits, parseUnits } from "viem";
 import { TOKEN_CONTRACT } from "../../contracts";
-
-interface OutcomeData {
-  id: string;
-  name: string;
-  chance: string;
-  buyYes: string;
-  buyNo: string;
-  sellYes: string;
-  sellNo: string;
-}
+import ConditionalTokensABI from '../../contracts/ctf/ConditionalTokens.json';
+import { ethers } from "ethers";
+import { supabase } from "../../lib/supabaseClient";
 
 const event = () => {
   const router = useRouter();
-  const {id}=router.query
+  if (!router.isReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // If router is ready but no ID, show error
+  if (!router.query.id) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500">Error</h1>
+          <p className="mt-2">No market ID found</p>
+          <button 
+            onClick={() => router.push('/')}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const id = router.query.id as string;
   const { event } = useGetEvent(id as string);
 
   const [choice, setChoice] = useState(""); //
   const [isBuy, setIsBuy] = useState(true); //buy or sell
   const [position, setPosition] = useState(1); //1 for yes, 0 for no
   const [amount, setAmount] = useState<string>("0");
-  const [isApproved, setIsApproved] = useState(false);
-  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS as `0x${string}`;
+  const [debugInfo, setDebugInfo] = useState({condition: {isReported: false, endTime: 0}});
+  const [deployer, setDeployer] = useState("");
+  const [questionId, setQuestionId] = useState("");
+  const [fpmmAddress, setFpmmAddress] = useState("");
+  // Add this state to track if redemption is available
+const [canRedeem, setCanRedeem] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
+  const [showRedeemSection, setShowRedeemSection] = useState(false);
+
+  // Wait for router to be ready
+  useEffect(() => {
+    if (!router.isReady) return;
+    
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        if (router.query.id) {
+          // Fetch your data here
+          setFpmmAddress(router.query.id as string);
+          await checkRedeemStatus();
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [router.isReady, router.query.id]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -59,7 +104,7 @@ const event = () => {
 
    // Calculate buy amount based on current input
    const { data: calculatedBuyAmount, isError } = useReadContract({
-    address: "0x569213644d0b75681994af0786de877fd993a977" as `0x${string}`,
+    address: id as `0x${string}`,
     abi: FpmmABI,
     functionName: "calcBuyAmount",
     args: amount && amount !== "0" ? [
@@ -118,7 +163,112 @@ const event = () => {
       return "0";
     }
   };
-  
+
+  const {
+    data: redeemHash,
+    isPending: isRedeemPending,
+    writeContract: writeRedeemContract,
+  } = useWriteContract();
+
+  // Modify the checkRedeemStatus function to check conditions
+const checkRedeemStatus = async () => {
+  if (!router.query.id) return;
+  const {data: fpmmData, error} = await supabase.from("events").select("*").eq("fpmm_address", id).single();
+
+  if (error) {
+    console.error('Error fetching fpmm data:', error);
+    return;
+  }
+
+  const fpmmAddress = fpmmData?.fpmm_address;
+  const deployer = fpmmData?.deployer;
+  const questionId = fpmmData?.questionId;
+
+  setFpmmAddress(fpmmAddress);
+  setDeployer(deployer);
+  setQuestionId(questionId);
+
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    
+    const fpmm = new ethers.Contract(
+      id || fpmmAddress,
+      FpmmABI,
+      provider
+    );
+
+    const conditionalToken = await fpmm.conditionalTokens();
+    
+    const conditionalTokens = new ethers.Contract(
+      conditionalToken,
+      ConditionalTokensABI.abi,
+      provider
+    );
+
+    const conditionId = await conditionalTokens.getConditionId(
+      deployer,
+      questionId,
+      2
+    );
+
+    const condition = await conditionalTokens.conditionInfo(conditionId);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    const canRedeemNow = condition[2] && Number(condition[1]) < currentTime;
+    setCanRedeem(canRedeemNow);
+
+    setDebugInfo({
+      condition: {
+        isReported: condition[2],
+        endTime: condition[1]
+      }
+    });
+  } catch (error) {
+    console.error('Error checking redeem status:', error);
+  }
+};
+
+// Add useEffect to check status periodically
+useEffect(() => {
+  checkRedeemStatus();
+  const interval = setInterval(checkRedeemStatus, 30000); // Check every 30 seconds
+  return () => clearInterval(interval);
+}, []);
+
+
+  const handleRedeem = async () => {
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const fpmm = new ethers.Contract(
+        "0x569213644d0b75681994af0786de877fd993a977",
+        FpmmABI,
+        provider
+      );
+
+      const conditionalToken = await fpmm.conditionalTokens();
+      const indexSets = [BigInt(1), BigInt(2)];
+
+      const conditionalId = await fpmm.getConditionId(
+        deployer,
+        questionId,
+        2
+      );
+
+      await writeRedeemContract({
+        address: conditionalToken as `0x${string}`,
+        abi: ConditionalTokensABI.abi,
+        functionName: 'redeemPositions',
+        args: [
+          process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS,
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+          conditionalId,
+          indexSets,
+        ],
+      });
+    } catch (error) {
+      console.error('Error redeeming positions:', error);
+    }
+  };
   
   return (
     <div className="flex flex-col items-center justify-center mt-10">
@@ -247,26 +397,6 @@ const event = () => {
     )}
   </div>
 )}
-            {/* <Button
-              variant="contained"
-              className={`text-black w-full py-2 rounded ${
-                isBuy
-                  ? "bg-blue-500 hover:bg-blue-600"
-                  : "bg-red-500 hover:bg-red-600"
-              }`}
-              onClick={async() => {
-                // console.log(
-                //   choice,
-                //   isBuy ? "Buy" : "Sell",
-                //   position === 1 ? "Yes" : "No",
-                //   amount
-                // );
-                console.log(calBuy);
-                handleBuy(writeContract, "0x8ff3801288a85ea261e4277d44e1131ea736f77b", position, amount);
-              }}
-            >
-              Confirm {isBuy ? "Buy" : "Sell"} {position === 1 ? "Yes" : "No"}
-            </Button> */}
             <button
                 onClick={handleApprove}
                 className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -288,7 +418,81 @@ const event = () => {
           </div>
         </div>
       </div>
-    </div>
+
+          {canRedeem && (
+      <div className="w-full max-w-2xl mt-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Redeem Positions</h2>
+            <button
+              onClick={() => setShowRedeemSection(!showRedeemSection)}
+              className="text-blue-500 hover:text-blue-600"
+            >
+              {showRedeemSection ? 'Hide' : 'Show'} Redeem Section
+            </button>
+          </div>
+
+          {showRedeemSection && (
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
+                <p>Status: Market Resolved</p>
+                <p>Is Reported: {debugInfo.condition.isReported ? 'Yes' : 'No'}</p>
+                <p>End Time: {new Date(Number(debugInfo.condition.endTime) * 1000).toLocaleString()}</p>
+              </div>
+
+              <button
+                onClick={handleRedeem}
+                disabled={isRedeemPending}
+                className={`w-full py-2 px-4 rounded-lg font-medium ${
+                  isRedeemPending
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
+              >
+                {isRedeemPending ? 'Processing Redemption...' : 'Redeem Positions'}
+              </button>
+
+              {redeemHash && (
+                <div className="bg-green-100 text-green-700 p-4 rounded-lg mt-4">
+                  <p className="text-sm">
+                    Redemption successful! Transaction hash: {redeemHash.slice(0, 10)}...
+                    <a 
+                      href={`https://etherscan.io/tx/${redeemHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline ml-2"
+                    >
+                      View on Etherscan
+                    </a>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* Show message if redemption is not available */}
+    {!canRedeem && debugInfo.condition && (
+      <div className="w-full max-w-2xl mt-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-center text-gray-600">
+            <h2 className="text-xl font-semibold mb-2">Redemption Not Available Yet</h2>
+            <p>
+              {!debugInfo.condition.isReported 
+                ? "Market has not been reported yet."
+                : "Market end time has not been reached."}
+            </p>
+            <p className="text-sm mt-2">
+              End Time: {new Date(Number(debugInfo.condition.endTime) * 1000).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+        </div>
+
   );
 };
 
