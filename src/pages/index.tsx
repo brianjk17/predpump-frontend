@@ -11,12 +11,36 @@ import Link from "next/link";
 const Home: NextPage = () => {
   const { allEvents, isLoading, error } = useGetAllEvents();
 
-  if (isLoading) {
-    return <div>Loading events...</div>;
-  }
+  function Content() {
+    if (isLoading) {
+      return (
+        <div className="text-white flex justify-center items-center">
+          Loading events...
+        </div>
+      );
+    }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+    if (error) {
+      return (
+        <div className="text-white justify-center items-center flex">
+          Error: {error}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
+        {allEvents.length === 0 ? (
+          <div>No events found</div>
+        ) : (
+          allEvents.map((event) => (
+            <Link href={`/event/${event.address}`} key={event.address}>
+              <EventCard eventData={event} />
+            </Link>
+          ))
+        )}
+      </div>
+    );
   }
 
   return (
@@ -47,17 +71,8 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
-
-      <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
-        {allEvents.length === 0 ? (
-          <div>No events found</div>
-        ) : (
-          allEvents.map((event) => (
-            <Link href={`/event/${event.address}`} key={event.address}>
-              <EventCard eventData={event} />
-            </Link>
-          ))
-        )}
+      <div className=" justify-center items-center flex">
+        <Content />
       </div>
     </>
   );

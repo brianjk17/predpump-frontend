@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import useMyEvents from "../../hooks/useMyEvents";
+
 import EventCard from "../../components/EventCard/EventCard";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/router";
+import { useMyEvents } from "../../hooks/useMyEvents";
 
 export default function index() {
   const router = useRouter();
-
-  const { myEvents } = useMyEvents();
+  const { events, isLoading, error } = useMyEvents();
   interface RawEvent {
     id: number;
     fpmm_title: string;
@@ -38,19 +38,34 @@ export default function index() {
     router.push(`/profile/${questionId}`);
   }
 
-  return (
-    <div className="flex w-full flex-col">
-      <p className="press-start-2p-regular text-white md:text-2xl text-xl">Profile</p>
+  if (isLoading) {
+    <div>Loading </div>;
+  }
 
-      <div>
-        <p className="text-white text-[18px] md:text-[20px] press-start-2p-regular">Your markets</p>
-        <div className="flex gap-4 flex-wrap items-center justify-center">
-          {myEvents.map((event, index) => (
-            <EventCard eventData={event} key={index} />
-          ))}
-        </div>
+  return (
+    <div className="flex w-full flex-col justify-center items-center flex-wrap">
+      <div className="flex gap-2 flex-wrap">
+        {/* {rawEvents.map((event, index) => (
+          <EventCard
+            eventData={{
+              id: event.id.toString(),
+              address: event.questionId,
+              question: event.fpmm_title,
+              choices: [""],
+            }}
+            key={index}
+          />
+        ))} */}
       </div>
-      <div className="mt-4">
+
+      <div className="flex gap-2 flex-wrap">
+        {events.map((event, index) => (
+          <div key={index} onClick={() => handleClick(event.id)}>
+            <EventCard eventData={event} />
+          </div>
+        ))}
+      </div>
+      {/* <div className="mt-4">
         <div>Raw Events</div>
         <div className="flex flex-col gap-2">
           {rawEvents.map((event) => (
@@ -62,7 +77,7 @@ export default function index() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

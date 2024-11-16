@@ -13,16 +13,18 @@ export default function Navbar() {
   };
 
   return (
-    <div className="relative bg-darkgreen p-2 z-30">
+    <div className="relative bg-darkgreen p-2 z-30 px-28">
       {/* Main Navbar */}
       <div className="flex flex-row justify-between items-center p-5 ">
-        <Link href="/" ><p className="text-white press-start-2p-regular">PREDPUMP</p></Link>
+        <Link href="/">
+          <p className="text-white press-start-2p-regular">PREDPUMP</p>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex flex-row justify-center items-center gap-5 text-teal-300">
           <Link href="/profile">[View Profile]</Link>
           <Link href="/create">[Create Bets]</Link>
-          <div>[{(Number(userBalance)/(10**18)).toLocaleString()} USDC]</div>
+          <div>[{(Number(userBalance) / 10 ** 18).toLocaleString()} USDC]</div>
           <ConnectButton showBalance={false} />
         </div>
 
