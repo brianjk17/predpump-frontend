@@ -20,12 +20,24 @@ const Home: NextPage = () => {
         <Boxes className="h-auto" />
 
         {/* Flex container for "hey" elements and PredPumpFun */}
-        <div className="flex items-center justify-center space-x-4 mt-48 z-10">
-          <Image src={gif} alt="Animated GIF" width={200} height={200} />
+        <div className="flex items-center justify-center md:space-x-4 sm:space-x-0 sm:space-y-4 mt-28 md:mt-48 z-10">
+         <Image
+          src={gif}
+          alt="Animated GIF"
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-52 lg:h-48"
+          width={200}
+          height={200}
+        />
           <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
             PredPump
           </div>
-          <Image src={gif} alt="Animated GIF" width={200} height={200} />
+          <Image
+            src={gif}
+            alt="Animated GIF"
+            className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-52 lg:h-48"
+            width={200}
+            height={200}
+          />
         </div>
       </div>
 

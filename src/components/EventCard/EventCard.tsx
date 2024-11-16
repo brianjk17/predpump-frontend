@@ -42,7 +42,7 @@ export default function EventCard({ eventData }: { eventData: Event }) {
   }
 
   return (
-    <div className="bg-white w-[400px] h-[200px] rounded-md flex flex-col p-5 justify-between">
+    <div className="bg-white w-[350px] h-[150px] md:w-[400px] md:h-[200px] rounded-md flex flex-col p-5 justify-between">
       <div className="press-start-2p-regular">{eventData.question}</div>
       <div className="gap-2">
         <Outcomes />

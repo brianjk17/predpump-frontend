@@ -9,21 +9,49 @@ import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { config } from "../wagmi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Nouns from "../public/nouns.png";
+import Image from "next/image";
 
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const glassesArray = Array.from({ length: 15 });
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <RainbowKitProvider>
-          <main className="min-w-full flex min-h-screen flex-col">
-            <Navbar />
-            <div className="flex-1 px-4 md:px-8 lg:px-16 xl:px-24 ">
-              <Component {...pageProps} />
-            </div>
+          <main className="min-w-full flex min-h-screen flex-col relative overflow-hidden">
+            {/* Left glasses icon */}
+            <div className="absolute pl-4 top-0 h-full flex flex-col justify-between items-center">
+              {glassesArray.map((_, index) => (
+                    <Image
+                      key={index}
+                      src={Nouns}
+                      alt="Glasses Icon"
+                      className="w-0 md:w-10 lg:w-12"
+                    />
+                  ))}
+                </div>
 
-            <div className="px-4 md:px-8 lg:px-16 xl:px-24">
+                {/* Right glasses icon */}
+                <div className="absolute right-4 top-0 h-full flex flex-col justify-between items-center">
+                  {glassesArray.map((_, index) => (
+                    <Image
+                      key={index}
+                      src={Nouns}
+                      alt="Glasses Icon"
+                      className="w-0 md:w-10 lg:w-12"
+                    />
+                  ))}
+                </div>
+
+                {/* Content */}
+                <Navbar />
+                <div className="flex-1 px-4 md:px-8 lg:px-16 xl:px-24 ">
+                  <Component {...pageProps} />
+                </div>
+
+                <div className="px-4 md:px-8 lg:px-16 xl:px-24">
               <Footer />
             </div>
           </main>
