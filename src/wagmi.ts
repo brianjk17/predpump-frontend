@@ -1,12 +1,13 @@
 import {
   Chain,
-  arbitrum,
   arbitrumSepolia,
-  base,
   baseSepolia,
-  mainnet,
-  optimism,
-  polygon,
+  chiliz,
+  neonDevnet,
+  mantleSepoliaTestnet,
+  flowTestnet,
+  scrollSepolia,
+  morphHolesky,
   sepolia,
 } from "wagmi/chains";
 import { http, cookieStorage, createConfig, createStorage } from "wagmi";
@@ -15,26 +16,7 @@ import {
   connectorsForWallets,
   getDefaultConfig,
 } from "@rainbow-me/rainbowkit";
-import {
-  metaMaskWallet,
-  rainbowWallet,
-  coinbaseWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-
-// Define Anvil chain
-const anvil: Chain = {
-  id: 31337,
-  name: "Anvil",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ethereum",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: { http: ["http://127.0.0.1:8545"] },
-    public: { http: ["http://127.0.0.1:8545"] },
-  },
-};
+import { metaMaskWallet, coinbaseWallet } from "@rainbow-me/rainbowkit/wallets";
 
 const connectors = connectorsForWallets(
   [
@@ -44,20 +26,31 @@ const connectors = connectorsForWallets(
     },
     {
       groupName: "Other Wallets",
-      wallets: [rainbowWallet, metaMaskWallet],
+      wallets: [metaMaskWallet],
     },
   ],
   {
     appName: "PredPump",
+    appDescription: "The Infinite Market for Degens",
     projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
   }
 );
 
 export const config = getDefaultConfig({
   appName: "PredPump",
-  // @ts-ignore
+  appDescription: "The Infinite Market for Degens",
+  //@ts-ignore
   connectors,
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
-  chains: [base],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  chains: [
+    baseSepolia,
+    chiliz,
+    neonDevnet,
+    mantleSepoliaTestnet,
+    flowTestnet,
+    scrollSepolia,
+    morphHolesky,
+    sepolia,
+  ],
+  ssr: true,
 });
