@@ -64,7 +64,7 @@ const MarketDataDisplay: React.FC<MarketDataDisplayProps> = ({ marketAddress }) 
   }, [poolBalances, sharePrice]);
 
   return (
-    <div className="w-full max-w-full bg-green-800 rounded-lg shadow-md">
+    <div className="w-full max-w-full bg-green-800/60 rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-xl font-bold text-white">
           Market Probabilities
