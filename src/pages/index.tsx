@@ -59,9 +59,13 @@ const Home: NextPage = () => {
           width={200}
           height={200}
         />
-          <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
+
+
+        <div className="animate-bounce">
+          <div className="press-start-2p-regular rainbow-tail md:text-9xl text-2xl">
             PREDPUMP
           </div>
+        </div>
           <Image
             src={gif}
             alt="Animated GIF"
