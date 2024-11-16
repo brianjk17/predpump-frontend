@@ -14,6 +14,8 @@ import { Button } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import confetti from "canvas-confetti";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -22,9 +24,10 @@ export default function index() {
   const [fpmmAddress, setFpmmAddress] = useState<string>("");
   const [isStoringData, setIsStoringData] = useState(false);
   const [isMounted, setIsMounted] = useState(false); // Flag to track if the component has mounted
-
   const { address } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
+
+  const router = useRouter();
 
   const {
     data: receipt,
@@ -55,6 +58,7 @@ export default function index() {
     dayjs().add(10, "day")
   );
   console.log(dayjs().add(10, "day"));
+
   function handleDeployPrediction() {
     if (selectedDate) {
       const epochSeconds = selectedDate.unix();
@@ -70,12 +74,6 @@ export default function index() {
           BigInt(epochSeconds + 10000), // endTime - uint256
           BigInt(2), // fee - uint256
         ],
-      });
-
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
       });
     }
   }
@@ -182,7 +180,18 @@ export default function index() {
             ? "Storing data..."
             : "Create Prediction Market"}
         </Button>
-        {isConfirming && <div>Waiting for confirmation...</div>}
+        {isConfirming && hash && (
+          <div>
+            <div>Waiting for confirmation...</div>
+            <Link
+              href={`https://arbitrum-sepolia.blockscout.com/tx/${hash}`}
+              target="_blank"
+              className="underline"
+            >
+              View tx Hash: {hash.slice(0, 5)}
+            </Link>
+          </div>
+        )}
         {isConfirmed && <div>Transaction confirmed.</div>}
         {/* {choices.length > 1 &&
           choices.map((choice, index) => {
@@ -207,18 +216,35 @@ export default function index() {
       </div>
 
       {isConfirmed && selectedDate && (
-        <div className="flex flex-col justify-center items-center bg-white w-[500px] rounded-md p-5 mt-10">
-          <div className="press-start-2p-regular">
-            Prediction Market created
+        <div className="flex justify-center items-center flex-col">
+          <div
+            className="flex flex-col justify-center items-center bg-white w-[500px] rounded-md p-5 mt-10"
+            onClick={() => router.push(`/profile/${fpmmAddress}`)}
+          >
+            <div className="press-start-2p-regular">
+              Prediction Market created
+            </div>
+
+            <div>
+              <div className="bg-white/10 p-3 rounded-lg">{question}</div>
+              <div>End Date :{selectedDate.format("MMMM D, YYYY h:mm A")}</div>
+            </div>
+
+            <Button
+              onClick={() => router.push(`/profile/${fpmmAddress}`)}
+              className=""
+            >
+              Proceed to approve
+            </Button>
           </div>
 
-          <div className="grid gap-2">
-            <div className="bg-white/10 p-3 rounded-lg">{question}</div>
-            <span>
-              <strong>End Date:</strong>{" "}
-              {selectedDate.format("MMMM D, YYYY h:mm A")}
-            </span>
-          </div>
+          <Link
+            href={`https://arbitrum-sepolia.blockscout.com/address/${fpmmAddress}`}
+            target="_blank"
+            className="underline text-white"
+          >
+            View Contract on Explorer
+          </Link>
         </div>
       )}
     </div>

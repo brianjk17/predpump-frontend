@@ -22,7 +22,7 @@ export const useGetAllEvents = () => {
         id: d.id,
         address: d.fpmm_address,
         question: d.fpmm_title,
-        choices: [""], // Adjust this based on your data structure
+        choices: [""],
       }));
 
       setAllEvents(transformedEvents);
