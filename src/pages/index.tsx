@@ -55,16 +55,16 @@ const Home: NextPage = () => {
          <Image
           src={gif}
           alt="Animated GIF"
-          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-48 lg:h-48"
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-52 lg:h-48"
           width={200}
           height={200}
         />
 
 
           <div className="animate-bounce">
-            <div className="press-start-2p-regular text-transparent stroke-text-md md:text-8xl text-2xl rainbow-tail ">
-              PREDPUMP
-            </div>
+          <div className="press-start-2p-regular text-transparent stroke-text-md sm:stroke-text sm:text-8xl md:text-6xl lg:text-8xl rainbow-tail">
+            PREDPUMP
+          </div>
           </div>
           <Image
             src={gif}
