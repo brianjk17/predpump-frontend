@@ -16,36 +16,48 @@ import ConditionalTokensABI from "../../contracts/ctf/ConditionalTokens.json";
 import { ethers } from "ethers";
 import { supabase } from "../../lib/supabaseClient";
 import MarketDataDisplay from "../../components/Chart";
+import { PushAPI, CONSTANTS } from "@pushprotocol/restapi";
+import { useWalletClient } from "wagmi";
+interface GroupChat {
+  groupId: string;
+  messages: Array<any>;
+  newMessage: string;
+}
+
+interface MarketState {
+  title: string;
+  deployer: string;
+  questionId: string;
+  fpmmAddress: string;
+}
 import { CHAINS_CONFIG } from "../../constants/chains";
 
 const event = () => {
+  const { address } = useAccount();
   const router = useRouter();
 
-  if (!router.isReady) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  const { data: walletClient } = useWalletClient();
 
-  // If router is ready but no ID, show error
-  if (!router.query.id) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500">Error</h1>
-          <p className="mt-2">No market ID found</p>
-          <button
-            onClick={() => router.push("/")}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Go Back Home
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Combine related states
+  const [chatState, setChatState] = useState<GroupChat>({
+    groupId: "",
+    messages: [],
+    newMessage: "",
+  });
+
+  const [marketState, setMarketState] = useState<MarketState>({
+    title: "",
+    deployer: "",
+    questionId: "",
+    fpmmAddress: "",
+  });
+
+  // Keep other independent states
+  const [pushUser, setPushUser] = useState<PushAPI | null>(null);
+  const [position, setPosition] = useState(1);
+  const [amount, setAmount] = useState<string>("0");
+  const [canRedeem, setCanRedeem] = useState(false);
+  const [showRedeemSection, setShowRedeemSection] = useState(false);
 
   const id = router.query.id as string;
   const { event } = useGetEvent(id as string);
@@ -53,8 +65,6 @@ const event = () => {
 
   const [choice, setChoice] = useState(""); //
   const [isBuy, setIsBuy] = useState(true); //buy or sell
-  const [position, setPosition] = useState(1); //1 for yes, 0 for no
-  const [amount, setAmount] = useState<string>("0");
   const [debugInfo, setDebugInfo] = useState({
     condition: { isReported: false, endTime: 0 },
   });
@@ -62,40 +72,10 @@ const event = () => {
   const [questionId, setQuestionId] = useState("");
   const [fpmmAddress, setFpmmAddress] = useState("");
   // Add this state to track if redemption is available
-  const [canRedeem, setCanRedeem] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showRedeemSection, setShowRedeemSection] = useState(false);
-
-  // Wait for router to be ready
-  useEffect(() => {
-    if (!router.isReady) return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        if (router.query.id) {
-          // Fetch your data here
-          setFpmmAddress(router.query.id as string);
-          await checkRedeemStatus();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [router.isReady, router.query.id]);
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (!isNaN(Number(value)) && value !== "") {
-      setAmount(value);
-    } else {
-      setAmount("0");
-    }
-  };
+  const [groupId, setGroupId] = useState<string>("");
+  const [messages, setMessages] = useState<Array<any>>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [title, setTitle] = useState("");
 
   const { data: hash, isPending, writeContract } = useWriteContract();
   const {
@@ -112,6 +92,16 @@ const event = () => {
     writeContract: writeContractApprove,
   } = useWriteContract();
 
+  // Calculate buy amount based on current input
+  const { data: calculatedBuyAmount, isError } = useReadContract({
+    address: id as `0x${string}`,
+    abi: FpmmABI,
+    functionName: "calcBuyAmount",
+    args:
+      amount && amount !== "0"
+        ? [parseUnits(amount, 18), BigInt(position)]
+        : undefined,
+  });
   // Calculate buy amount based on current input
   const { data: calculatedBuyAmount, isError } = useReadContract({
     address: id as `0x${string}`,
@@ -155,6 +145,26 @@ const event = () => {
     writeContract: writeRedeemContract,
   } = useWriteContract();
 
+  useEffect(() => {
+    const initPushUser = async () => {
+      if (!walletClient) return;
+
+      try {
+        const user = await PushAPI.initialize(walletClient, {
+          env: CONSTANTS.ENV.STAGING,
+        });
+        setPushUser(user);
+      } catch (error) {
+        console.error("Error initializing Push:", error);
+      }
+    };
+
+    initPushUser();
+  }, [walletClient]);
+
+  useEffect(() => {
+    event.choices.length > 1 && setChoice(event.choices[0]);
+  }, []);
   // Modify the checkRedeemStatus function to check conditions
   const checkRedeemStatus = async () => {
     if (!router.query.id) return;
@@ -178,7 +188,7 @@ const event = () => {
     setQuestionId(questionId);
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.providers.JsonRpcProvider(window.ethereum);
 
       const fpmm = new ethers.Contract(id || fpmmAddress, FpmmABI, provider);
 
@@ -220,9 +230,118 @@ const event = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      if (!router.query.id || !pushUser) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("events")
+          .select("*, push_group_id")
+          .eq("fpmm_address", router.query.id)
+          .single();
+
+        if (data) {
+          setMarketState({
+            title: data.fpmm_title,
+            deployer: data.deployer,
+            questionId: data.questionId,
+            fpmmAddress: data.fpmm_address,
+          });
+
+          if (data.push_group_id) {
+            const history = await pushUser.chat.history(data.push_group_id);
+
+            const formattedHistory = history
+              .map((msg) => ({
+                fromDID: msg.fromDID,
+                content:
+                  msg.messageContent || msg.messageObj?.content || msg.content,
+                timestamp: msg.timestamp,
+                fromCAIP10: msg.fromCAIP10,
+              }))
+              .filter(
+                (msg) =>
+                  msg.content &&
+                  msg.content !== "..." &&
+                  msg.content.trim() !== ""
+              );
+
+            console.log(formattedHistory);
+
+            setChatState((prev) => ({
+              ...prev,
+              groupId: data.push_group_id,
+              messages: formattedHistory,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching market data:", error);
+      }
+    };
+
+    fetchMarketData();
+  }, [router.query.id, pushUser]);
+
+  if (!router.isReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // If router is ready but no ID, show error
+  if (!router.query.id) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500">Error</h1>
+          <p className="mt-2">No market ID found</p>
+          <button
+            onClick={() => router.push("/")}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!isNaN(Number(value)) && value !== "") {
+      setAmount(value);
+    } else {
+      setAmount("0");
+    }
+  };
+
+  function handleApprove() {
+    // Convert input amount to 18 decimal places
+    const amounts = BigInt(parseFloat(amount) * 10 ** 18);
+    writeContractApprove({
+      address: TOKEN_CONTRACT.address,
+      abi: TOKEN_CONTRACT.abi as Abi,
+      functionName: "approve",
+      args: [id as `0x${string}`, amounts],
+    });
+  }
+
+  const formatTokenAmount = (amount: unknown) => {
+    if (!amount) return "0";
+    try {
+      return formatUnits(BigInt(amount.toString()), 18);
+    } catch {
+      return "0";
+    }
+  };
+
   const handleRedeem = async () => {
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.providers.JsonRpcProvider(window.ethereum);
       const fpmm = new ethers.Contract(fpmmAddress, FpmmABI, provider);
 
       const conditionalToken = await fpmm.conditionalTokens();
@@ -466,6 +585,61 @@ const event = () => {
                   Number(debugInfo.condition.endTime) * 1000
                 ).toLocaleString()}
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {chatState.groupId && (
+        <div className="w-full max-w-2xl mt-8">
+          <div className="bg-teal-300 rounded-lg p-2">
+            <div className="bg-white rounded-lg p-4">
+              <h2 className="text-xl press-start-2p-regular mb-4">
+                Market Discussion
+              </h2>
+
+              <div className="h-96 overflow-y-auto border rounded p-4 bg-gray-50 mb-4">
+                {chatState.messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`p-2 rounded mb-2 ${
+                      msg.fromDID === address
+                        ? "bg-teal-100 ml-auto"
+                        : "bg-gray-100"
+                    } max-w-[80%]`}
+                  >
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>
+                        {msg.fromDID?.slice(0, 6)}...{msg.fromDID?.slice(-4)}
+                      </span>
+                      {msg.timestamp && (
+                        <span>
+                          {new Date(Number(msg.timestamp)).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                    <div className="break-words whitespace-pre-wrap">
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={chatState.newMessage}
+                  onChange={handleMessageChange}
+                  onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                  className="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-teal-300"
+                />
+                <button
+                  onClick={sendMessage}
+                  className="px-6 py-2 bg-teal-300 hover:bg-teal-700 hover:text-white text-black rounded"
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         </div>

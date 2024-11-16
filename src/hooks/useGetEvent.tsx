@@ -2,7 +2,6 @@ import { useAccount, useReadContract } from "wagmi";
 import { Event } from "../types/types";
 
 export const useGetEvent = (id: string) => {
-  const { address: ownerAddress, chain } = useAccount();
 
   const { data: event } =
     id === "1"

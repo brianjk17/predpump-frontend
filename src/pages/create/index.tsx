@@ -18,6 +18,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CHAINS_CONFIG } from "../../constants/chains";
 import { useFactoryContract } from "../../hooks/contracts/useFactoryContract";
+import { PushAPI, CONSTANTS } from "@pushprotocol/restapi";
+import { useWalletClient } from "wagmi";
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -30,8 +32,27 @@ export default function index() {
   const { data: hash, isPending, writeContract } = useWriteContract();
 
   const { address: factoryContractAddress } = useFactoryContract(chainId ?? 1);
+  const { data: walletClient } = useWalletClient();
+  const [pushUser, setPushUser] = useState<PushAPI | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const initPushUser = async () => {
+      if (!walletClient) return;
+
+      try {
+        const user = await PushAPI.initialize(walletClient, {
+          env: CONSTANTS.ENV.STAGING,
+        });
+        setPushUser(user);
+      } catch (error) {
+        console.error("Error initializing Push:", error);
+      }
+    };
+
+    initPushUser();
+  }, [walletClient]);
 
   const {
     data: receipt,
@@ -73,25 +94,54 @@ export default function index() {
           address as `0x${string}`, // oracle - address
           questionId as `0x${string}`, // questionId - bytes32
           BigInt(2), // outcomeSlotCount - uint256
-          BigInt(epochSeconds + 10000), // endTime - uint256
+          BigInt(epochSeconds + 60), // endTime - uint256
           BigInt(2), // fee - uint256
         ],
       });
     }
   }
 
-  async function storeEventData(fpmmAddress: string, question: string) {
-    try {
-      setIsStoringData(true);
-      const { data, error } = await supabase.from("events").insert([
-        {
-          fpmm_address: fpmmAddress,
-          fpmm_title: question,
-          deployer: address,
-          questionId: questionId,
+  // Modify the storeEventData function
+async function storeEventData(fpmmAddress: string, question: string) {
+  try {
+    setIsStoringData(true);
+
+    // Create Push Group
+    let groupId = null;
+    if (pushUser) {
+      try {
+        const newGroup = await pushUser.chat.group.create(
+          `Market: ${question.slice(0, 30)}...`, // Group name
+          {
+            description: `${question}`,
+            image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABA...", // Your base64 image
+            members: [], // You can add members here if needed
+            private: false,
+            rules: {
+              entry: { conditions: [] },
+              chat: { conditions: [] }
+            }
+          }
+        );
+        
+        console.log('Created Push group:', newGroup);
+        groupId = newGroup.chatId;
+      } catch (error) {
+        console.error('Error creating Push group:', error);
+      }
+    }
+
+    // Store in Supabase with groupId
+    const { data, error } = await supabase.from("events").insert([
+      {
+        fpmm_address: fpmmAddress,
+        fpmm_title: question,
+        deployer: address,
+        questionId: questionId,
+        push_group_id: groupId // Add this new field
           chainId: chainId,
-        },
-      ]);
+      },
+    ]);
 
       if (error) throw error;
       console.log("Stored event data successfully");

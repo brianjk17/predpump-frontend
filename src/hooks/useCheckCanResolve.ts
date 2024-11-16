@@ -2,13 +2,14 @@ import { ethers } from "ethers";
 import FpmmABI from "../contracts/fpmm/fpmmAbi.json";
 import ConditionalTokensABI from "../contracts/ctf/ConditionalTokens.json";
 
+
 export const handleCheckCanResolve = async (
   address: string,
   deployer: string,
   questionId: string,
   outcomeSlots: number
 ) => {
-  const provider = new ethers.BrowserProvider(window.ethereum);
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
 
   const fpmm = new ethers.Contract(address, FpmmABI, provider);
@@ -38,8 +39,6 @@ export const handleCheckCanResolve = async (
 
   const info = await conditionalTokens.conditionInfo(conditionalId2);
   console.log("info", info)
-
-
 
   return canResolve;
 };
