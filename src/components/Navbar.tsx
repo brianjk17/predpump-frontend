@@ -13,7 +13,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="relative bg-darkgreen p-2 z-30 px-28">
+    <div className="relative bg-darkgreen pt-2 z-30 ">
       {/* Main Navbar */}
       <div className="flex flex-row justify-between items-center p-5 ">
         <Link href="/">
@@ -29,7 +29,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Icon */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center justify-between gap-2">
           {isMenuOpen ? (
             <LuMinus
               className="h-6 w-6 cursor-pointer text-white"

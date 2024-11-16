@@ -262,14 +262,15 @@ const event = () => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-10">
-      <div className=" flex justify-between gap-5">
-        <div className=" bg-teal-300 rounded-lg">
-          <h1 className="text-2xl pb-5">{title} </h1>
+      <div className=" flex flex-col justify-between gap-5">
+        <div className=" bg-teal-300 rounded-lg p-2">
+          <h1 className="text-xl pb-5 press-start-2p-regular">{title} </h1>
 
           <MarketDataDisplay marketAddress={id as `0x${string}`} />
         </div>
 
-        <div className="bg-green-500 rounded-md p-4 h-96 min-w-[23rem]">
+        <div className="bg-teal-300 rounded-md p-2 min-w-[23rem] flex flex-col">
+          <div className="bg-white rounded-lg p-2 flex flex-col">
           <h1 className="text-xl mt-4">Outcome: </h1>
           <div className="w-full justify-center items-center flex gap-2">
             <Button
@@ -297,6 +298,7 @@ const event = () => {
             placeholder="Enter amount"
             className="w-full p-2 rounded mb-4"
           />
+
           <div>
             {amount && amount !== "0" && (
               <div className="bg-white rounded p-3 mb-4">
@@ -352,6 +354,7 @@ const event = () => {
                     position === 1 ? "Yes" : "No"
                   }`}
             </Button>
+            </div>
           </div>
         </div>
       </div>

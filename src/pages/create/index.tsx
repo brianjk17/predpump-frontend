@@ -168,7 +168,7 @@ export default function index() {
 
         <Button
           variant="contained"
-          className="bg-green-500 text-black"
+          className=" text-black hover:bg-teal-700 hover:text-white"
           onClick={handleDeployPrediction}
           disabled={
             isPending || isStoringData || !selectedDate || question.length < 1
@@ -225,7 +225,7 @@ export default function index() {
               Prediction Market created
             </div>
 
-            <div>
+            <div className="items-center justify-center">
               <div className="bg-white/10 p-3 rounded-lg">{question}</div>
               <div>End Date :{selectedDate.format("MMMM D, YYYY h:mm A")}</div>
             </div>
