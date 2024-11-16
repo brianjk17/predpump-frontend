@@ -89,6 +89,27 @@ const Index = () => {
     <div>
       <h1>EVENTS</h1>
 
+      <div className="bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">Resolve Event</h2>
+              <div className="space-y-4">
+                <p className="text-gray-600">
+                  As the event creator, you can resolve this event with the final outcome.
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg disabled:opacity-50"
+                  >
+                    Resolve as YES
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg disabled:opacity-50"
+                  >
+                    Resolve as NO
+                  </button>
+          </div>
+        </div>
+      </div>
+
       {eventData && (
         <div>
           <h2>Event Details:</h2>

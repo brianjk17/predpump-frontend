@@ -21,13 +21,7 @@ export default function index() {
   const now = Math.floor(Date.now() / 1000); // Current epoch time in seconds
   const later = now + 15 * 60; // Add 15 minutes (15 * 60 seconds)
 
-  useEffect(() => {
-    console.log("useEffect");
-    async()=>{
-      getAllEventsFromSupabase();
-    }
-  
-  }, []);
+ 
 
   const { address } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
@@ -102,15 +96,6 @@ export default function index() {
   //   }
   //   setChoices([...choices, ""]);
   // }
-
-  async function getAllEventsFromSupabase() {
-    const { data, error } = await supabase.from("events").select("*");
-    if (error){
-      console.error("Error fetching events:", error);
-      throw error;
-    }
-    console.log(data)
-  }
 
   return (
     <div>
