@@ -26,36 +26,36 @@ function MyApp({ Component, pageProps }: AppProps) {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <main className="min-w-full flex min-h-screen flex-col relative overflow-hidden">
               {/* Left glasses icon */}
-            <div className="absolute pl-4 top-0 h-full flex flex-col justify-between items-center">
-              {glassesArray.map((_, index) => (
-                    <Image
-                      key={index}
-                      src={Nouns}
-                      alt="Glasses Icon"
-                      className="w-0 md:w-10 lg:w-12"
-                    />
-                  ))}
-                </div>
+              <div className="absolute pl-4 top-0 h-full flex flex-col justify-between items-center">
+                {glassesArray.map((_, index) => (
+                  <Image
+                    key={index}
+                    src={Nouns}
+                    alt="Glasses Icon"
+                    className="w-0 md:w-10 lg:w-12"
+                  />
+                ))}
+              </div>
 
-                {/* Right glasses icon */}
-                <div className="absolute right-4 top-0 h-full flex flex-col justify-between items-center">
-                  {glassesArray.map((_, index) => (
-                    <Image
-                      key={index}
-                      src={Nouns}
-                      alt="Glasses Icon"
-                      className="w-0 md:w-10 lg:w-12"
-                    />
-                  ))}
-                </div>
+              {/* Right glasses icon */}
+              <div className="absolute right-4 top-0 h-full flex flex-col justify-between items-center">
+                {glassesArray.map((_, index) => (
+                  <Image
+                    key={index}
+                    src={Nouns}
+                    alt="Glasses Icon"
+                    className="w-0 md:w-10 lg:w-12"
+                  />
+                ))}
+              </div>
 
-                {/* Content */}
-                <Navbar />
-                  <div className="flex-1 px-4 md:px-8 lg:px-16 xl:px-24 ">
-                    <Component {...pageProps} />
-                  </div>
+              {/* Content */}
+              <Navbar />
+              <div className="flex-1 px-8 md:px-8 lg:px-24 ">
+                <Component {...pageProps} />
+              </div>
 
-                  <div className="px-4 md:px-8 lg:px-16 xl:px-24">
+              <div className="px-4 md:px-8 lg:px-16 xl:px-24">
                 <Footer />
               </div>
             </main>
