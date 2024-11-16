@@ -16,6 +16,8 @@ import dayjs, { Dayjs } from "dayjs";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { PushAPI, CONSTANTS } from '@pushprotocol/restapi';
+import { useWalletClient } from 'wagmi';
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -26,8 +28,28 @@ export default function index() {
   const [isMounted, setIsMounted] = useState(false); // Flag to track if the component has mounted
   const { address } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
+  const { data: walletClient } = useWalletClient();
+const [pushUser, setPushUser] = useState<PushAPI | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const initPushUser = async () => {
+      if (!walletClient) return;
+      
+      try {
+        const user = await PushAPI.initialize(walletClient, {
+          env: CONSTANTS.ENV.STAGING,
+        });
+        setPushUser(user);
+      } catch (error) {
+        console.error('Error initializing Push:', error);
+      }
+    };
+  
+    initPushUser();
+  }, [walletClient]);
+  
 
   const {
     data: receipt,
@@ -78,26 +100,56 @@ export default function index() {
     }
   }
 
-  async function storeEventData(fpmmAddress: string, question: string) {
-    try {
-      setIsStoringData(true);
-      const { data, error } = await supabase.from("events").insert([
-        {
-          fpmm_address: fpmmAddress,
-          fpmm_title: question,
-          deployer: address,
-          questionId: questionId,
-        },
-      ]);
+  // Modify the storeEventData function
+async function storeEventData(fpmmAddress: string, question: string) {
+  try {
+    setIsStoringData(true);
 
-      if (error) throw error;
-      console.log("Stored event data successfully");
-    } catch (error) {
-      console.error("Error storing event data:", error);
-    } finally {
-      setIsStoringData(false);
+    // Create Push Group
+    let groupId = null;
+    if (pushUser) {
+      try {
+        const newGroup = await pushUser.chat.group.create(
+          `Market: ${question.slice(0, 30)}...`, // Group name
+          {
+            description: `${question}`,
+            image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABA...", // Your base64 image
+            members: [], // You can add members here if needed
+            private: false,
+            rules: {
+              entry: { conditions: [] },
+              chat: { conditions: [] }
+            }
+          }
+        );
+        
+        console.log('Created Push group:', newGroup);
+        groupId = newGroup.chatId;
+      } catch (error) {
+        console.error('Error creating Push group:', error);
+      }
     }
+
+    // Store in Supabase with groupId
+    const { data, error } = await supabase.from("events").insert([
+      {
+        fpmm_address: fpmmAddress,
+        fpmm_title: question,
+        deployer: address,
+        questionId: questionId,
+        push_group_id: groupId // Add this new field
+      },
+    ]);
+
+    if (error) throw error;
+    console.log('Stored event data successfully');
+
+  } catch (error) {
+    console.error('Error storing event data:', error);
+  } finally {
+    setIsStoringData(false);
   }
+}
 
   useEffect(() => {
     if (receipt?.logs[1]?.topics[2]) {
