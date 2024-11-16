@@ -9,6 +9,7 @@ import {
 import { TOKEN_CONTRACT } from "../../../contracts";
 import { Abi } from "viem";
 import fpmmAbi from "../../../contracts/fpmm/fpmmAbi.json";
+import { handleCheckCanResolve } from "../../../hooks/useCheckCanResolve";
 
 interface Event {
   id: number;
@@ -81,6 +82,11 @@ const Index = () => {
     }
   }
 
+  async function checkCanResolve() {
+    const canResolve = await handleCheckCanResolve(eventData!.fpmm_address, eventData!.deployer, questionId as string, 2);
+    console.log(canResolve);
+  }
+
   useEffect(() => {
     fetchEventData();
   }, [questionId]);
@@ -90,6 +96,7 @@ const Index = () => {
       <h1>EVENTS</h1>
 
       <div className="bg-white p-6 rounded-lg shadow">
+        <button onClick={checkCanResolve}>Check Can Resolve</button>
               <h2 className="text-xl font-semibold mb-4">Resolve Event</h2>
               <div className="space-y-4">
                 <p className="text-gray-600">
