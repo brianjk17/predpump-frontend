@@ -62,7 +62,7 @@ const Home: NextPage = () => {
 
 
           <div className="animate-bounce">
-            <div className="press-start-2p-regular text-transparent stroke-text md:text-9xl text-2xl rainbow-tail ">
+            <div className="press-start-2p-regular text-transparent stroke-text-md md:text-9xl text-2xl rainbow-tail ">
               PREDPUMP
             </div>
           </div>
