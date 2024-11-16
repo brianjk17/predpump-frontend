@@ -16,6 +16,7 @@ import dayjs, { Dayjs } from "dayjs";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CHAINS_CONFIG } from "../../constants/chains";
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -24,7 +25,7 @@ export default function index() {
   const [fpmmAddress, setFpmmAddress] = useState<string>("");
   const [isStoringData, setIsStoringData] = useState(false);
   const [isMounted, setIsMounted] = useState(false); // Flag to track if the component has mounted
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
 
   const router = useRouter();
@@ -57,8 +58,16 @@ export default function index() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
     dayjs().add(10, "day")
   );
-  console.log(dayjs().add(10, "day"));
 
+  // console.log(
+  //   CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+  //     .token_address
+  // );
+
+  console.log(
+    CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+      .token_address
+  );
   function handleDeployPrediction() {
     if (selectedDate) {
       const epochSeconds = selectedDate.unix();
@@ -67,7 +76,8 @@ export default function index() {
         abi: FACTORY_CONTRACT.abi as Abi,
         functionName: "createFPMM",
         args: [
-          TOKEN_CONTRACT.address as `0x${string}`, // collateralToken - address
+          CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+            .token_address, // collateralToken - address
           address as `0x${string}`, // oracle - address
           questionId as `0x${string}`, // questionId - bytes32
           BigInt(2), // outcomeSlotCount - uint256
@@ -87,6 +97,7 @@ export default function index() {
           fpmm_title: question,
           deployer: address,
           questionId: questionId,
+          chainId: chainId,
         },
       ]);
 
@@ -184,7 +195,9 @@ export default function index() {
           <div>
             <div>Waiting for confirmation...</div>
             <Link
-              href={`https://arbitrum-sepolia.blockscout.com/tx/${hash}`}
+              href={`${
+                CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].scan
+              }tx/${hash}`}
               target="_blank"
               className="underline"
             >
@@ -239,7 +252,10 @@ export default function index() {
           </div>
 
           <Link
-            href={`https://arbitrum-sepolia.blockscout.com/address/${fpmmAddress}`}
+            // href={`${CHAINS_CONFIG[chainId]?}address/${fpmmAddress}`}
+            href={`${
+              CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].scan
+            }address/${fpmmAddress}`}
             target="_blank"
             className="underline text-white"
           >

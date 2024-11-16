@@ -4,10 +4,15 @@ import {
   arbitrum,
   arbitrumSepolia,
   base,
+  baseSepolia,
+  flowTestnet,
   mainnet,
+  mantaSepoliaTestnet,
+  morphSepolia,
   optimism,
   polygon,
   sepolia,
+  spicy,
 } from "wagmi/chains";
 
 // Define Anvil chain
@@ -29,9 +34,13 @@ export const config = getDefaultConfig({
   appName: "RainbowKit App",
   projectId: "YOUR_PROJECT_ID",
   chains: [
-    anvil,
+    arbitrumSepolia,
     sepolia,
-    arbitrumSepolia
+    baseSepolia,
+    mantaSepoliaTestnet,
+    flowTestnet,
+    morphSepolia,
+    spicy,
   ],
   ssr: true,
 });
