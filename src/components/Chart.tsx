@@ -64,9 +64,9 @@ const MarketDataDisplay: React.FC<MarketDataDisplayProps> = ({ marketAddress }) 
   }, [poolBalances, sharePrice]);
 
   return (
-    <div className="w-full max-w-full bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-full bg-green-800 rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold text-white">
           Market Probabilities
         </h2>
       </div>
@@ -88,7 +88,7 @@ const MarketDataDisplay: React.FC<MarketDataDisplayProps> = ({ marketAddress }) 
                   <circle cx="12" cy="12" r="10" />
                   <path d="M8 12l2 2 4-4" />
                 </svg>
-                <span className="font-medium">Yes</span>
+                <span className="font-medium text-green-800">Yes</span>
               </div>
               <div className="text-right">
                 <div className="text-lg font-bold text-green-700">
@@ -109,7 +109,7 @@ const MarketDataDisplay: React.FC<MarketDataDisplayProps> = ({ marketAddress }) 
                   <circle cx="12" cy="12" r="10" />
                   <path d="M15 9l-6 6M9 9l6 6" />
                 </svg>
-                <span className="font-medium">No</span>
+                <span className="font-medium text-red-950">No</span>
               </div>
               <div className="text-right">
                 <div className="text-lg font-bold text-red-700">
