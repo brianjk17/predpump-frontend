@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@coinbase/onchainkit": "^0.35.5",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.7",
