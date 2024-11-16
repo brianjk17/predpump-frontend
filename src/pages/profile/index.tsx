@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 import { Event } from "../../types/types";
 
 export default function index() {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Loading state
 
@@ -19,7 +19,8 @@ export default function index() {
       const { data, error } = await supabase
         .from("events")
         .select("*")
-        .eq("deployer", address);
+        .eq("deployer", address)
+        .eq("chainId", chainId);
 
       if (error) throw error;
 

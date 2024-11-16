@@ -47,11 +47,12 @@ const Index = () => {
   function handleApprove() {
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
+    console.log(eventData);
     writeContractApprove({
       address: tokenContractAddress,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "approve",
-      args: [eventData!.fpmm_address, amount],
+      args: [eventData?.fpmm_address, amount],
     });
   }
 
@@ -68,7 +69,7 @@ const Index = () => {
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
     writeContract({
-      address: eventData!.fpmm_address as `0x${string}`,
+      address: eventData?.fpmm_address as `0x${string}`,
       abi: fpmmAbi as Abi,
       functionName: "addFunding",
       args: [amount, [1, 1]],

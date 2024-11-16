@@ -427,7 +427,7 @@ const event = () => {
                   <div className="bg-green-100 text-green-700 p-4 rounded-lg mt-4">
                     <p className="text-sm">
                       Redemption successful! Transaction hash:{" "}
-                      {redeemHash.slice(0, 10)}...
+                      {redeemHash.slice(0, 10)}...{redeemHash.slice(0, -5)}
                       <a
                         href={`https://etherscan.io/tx/${redeemHash}`}
                         target="_blank"

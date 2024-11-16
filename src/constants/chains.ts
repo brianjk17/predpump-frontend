@@ -34,7 +34,7 @@ export const CHAINS_CONFIG = {
   },
   // morph
   [2710]: {
-    scan: "https://arbitrum-sepolia.blockscout.com/",
+    scan: "https://explorer-api-holesky.morphl2.io/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_MORPH as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_MORPH as `0x${string}`,

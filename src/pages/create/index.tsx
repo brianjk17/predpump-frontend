@@ -193,7 +193,7 @@ export default function index() {
               target="_blank"
               className="underline"
             >
-              View tx Hash: {hash.slice(0, 5)}
+              View tx Hash: {hash.slice(0, 10)}...{hash.slice(0, -5)}
             </Link>
           </div>
         )}
