@@ -24,6 +24,7 @@ export const useGetSpecificIdBet = (fpmmAddress: string) => {
 
       const transformedEvents: Event[] = data.map(d => ({
         id: d.id,
+        address: d.fpmm_address,
         question: d.fpmm_title,
         choices: [""] // Adjust based on your data structure
         // Add any other fields you need
