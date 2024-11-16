@@ -7,18 +7,34 @@ const {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}", // Paths for scanning your files
   ],
-  darkMode: "class",
+  darkMode: "class", // Enable dark mode
   theme: {
     extend: {
-      colous:{
-        darkgreen: "#022926",
-      }
+      
+      colors: {
+        darkgreen: "#022926", // Add your custom color
+      },
+      animation: {
+        bounce: "bounce 1s infinite", // Add custom bounce animation
+      },
+      keyframes: {
+        bounce: {
+          "0%, 100%": {
+            transform: "translateY(100%)",
+            animationTimingFunction: "ease-in-out",
+          },
+          "50%": {
+            transform: "translateY(0)",
+            animationTimingFunction: "ease-in-out",
+          },
+        },
+      },
     },
   },
   plugins: [
-    addVariablesForColors, // Adds color variables as CSS custom properties
+    addVariablesForColors, // Your custom plugin for color variables
   ],
 };
 

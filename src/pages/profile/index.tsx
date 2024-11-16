@@ -1,67 +1,72 @@
 import React, { useEffect, useState } from "react";
-import useMyEvents from "../../hooks/useMyEvents";
+
 import EventCard from "../../components/EventCard/EventCard";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
+import { Event } from "../../types/types";
 
 export default function index() {
+  const { address } = useAccount();
+  const [myEvents, setMyEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Loading state
+
   const router = useRouter();
 
-  const { myEvents } = useMyEvents();
-  interface RawEvent {
-    id: number;
-    fpmm_title: string;
-    questionId: string;
-  }
-
-  const [rawEvents, setRawEvents] = useState<RawEvent[]>([]);
-
-  async function fetchRawEvents() {
+  async function fetchMyEvents() {
     try {
+      setIsLoading(true); // Start loading
       const { data, error } = await supabase
         .from("events")
-        .select("id, fpmm_title, questionId")
-        .order("created_at", { ascending: false });
+        .select("*")
+        .eq("deployer", address);
 
       if (error) throw error;
-      if (data) setRawEvents(data);
+
+      if (data) {
+        const transformedEvents: Event[] = data.map((d: any) => ({
+          id: d.id,
+          address: d.fpmm_address,
+          question: d.fpmm_title,
+          choices: [""],
+        }));
+
+        setMyEvents(transformedEvents);
+      }
     } catch (error) {
-      console.error("Error fetching raw events:", error);
+      console.error("Error fetching events:", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   }
 
-  useEffect(() => {
-    fetchRawEvents();
-  }, []);
-
-  function handleClick(questionId: string) {
-    router.push(`/profile/${questionId}`);
+  function handleClick(fpmm_address: string) {
+    router.push(`/profile/${fpmm_address}`);
   }
 
+  useEffect(() => {
+    if (address) fetchMyEvents();
+  }, [address]);
+
   return (
-    <div className="flex w-full">
-      profile
-      <div>
-        your markets
-        <div className="flex gap-2 flex-wrap">
-          {myEvents.map((event, index) => (
-            <EventCard eventData={event} key={index} />
-          ))}
-        </div>
-      </div>
-      <div className="mt-4">
-        <div>Raw Events</div>
-        <div className="flex flex-col gap-2">
-          {rawEvents.map((event) => (
-            <div key={event.id}>
-              <h1>{event.fpmm_title} </h1>
-              <button onClick={() => handleClick(event.questionId)}>
-                Click
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex w-full flex-col justify-center items-center flex-wrap">
+      {isLoading ? ( // Show loading spinner or message
+        <div>Loading...</div>
+      ) : (
+        <>
+          <div className="flex gap-2 flex-wrap">
+            {/* If you want to add other raw events */}
+          </div>
+
+          <div className="flex gap-2 flex-wrap justify-center items-center">
+            {myEvents.map((event, index) => (
+              <div key={index} onClick={() => handleClick(event.address)}>
+                <EventCard eventData={event} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

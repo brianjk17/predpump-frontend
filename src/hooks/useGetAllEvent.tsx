@@ -12,7 +12,10 @@ export const useGetAllEvents = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const { data, error } = await supabase.from("events").select("*");
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .is("resolved", null);
 
       if (error) {
         throw error;
@@ -22,7 +25,7 @@ export const useGetAllEvents = () => {
         id: d.id,
         address: d.fpmm_address,
         question: d.fpmm_title,
-        choices: [""], // Adjust this based on your data structure
+        choices: [""],
       }));
 
       setAllEvents(transformedEvents);

@@ -11,31 +11,24 @@ import Link from "next/link";
 const Home: NextPage = () => {
   const { allEvents, isLoading, error } = useGetAllEvents();
 
-  if (isLoading) {
-    return <div>Loading events...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  return (
-    <>
-      <div className="h-full relative w-full overflow-hidden bg-darkgreen items-center flex justify-center rounded-lg">
-        <div className="absolute inset-0 w-full h-full bg-darkgreen [mask-image:radial-gradient(transparent,white)] pointer-events-none z-0" />
-
-        <Boxes className="h-auto" />
-
-        {/* Flex container for "hey" elements and PredPumpFun */}
-        <div className="flex items-center justify-center space-x-4 mt-48 z-10">
-          <Image src={gif} alt="Animated GIF" width={200} height={200} />
-          <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
-            PredPump
-          </div>
-          <Image src={gif} alt="Animated GIF" width={200} height={200} />
+  function Content() {
+    if (isLoading) {
+      return (
+        <div className="text-white flex justify-center items-center">
+          Loading events...
         </div>
-      </div>
+      );
+    }
 
+    if (error) {
+      return (
+        <div className="text-white justify-center items-center flex">
+          Error: {error}
+        </div>
+      );
+    }
+
+    return (
       <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
         {allEvents.length === 0 ? (
           <div>No events found</div>
@@ -46,6 +39,44 @@ const Home: NextPage = () => {
             </Link>
           ))
         )}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="h-full relative w-full overflow-hidden bg-darkgreen items-center flex justify-center rounded-lg">
+        <div className="absolute inset-0 w-full h-full bg-darkgreen [mask-image:radial-gradient(transparent,white)] pointer-events-none z-0" />
+
+        <Boxes className="h-auto" />
+
+        {/* Flex container for "hey" elements and PredPumpFun */}
+        <div className="flex items-center justify-center md:space-x-4 sm:space-x-0 sm:space-y-4 mt-28 md:mt-48 z-10">
+         <Image
+          src={gif}
+          alt="Animated GIF"
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-48 lg:h-48"
+          width={200}
+          height={200}
+        />
+
+
+          <div className="animate-bounce">
+            <div className="press-start-2p-regular text-transparent stroke-text-md md:text-8xl text-2xl rainbow-tail ">
+              PREDPUMP
+            </div>
+          </div>
+          <Image
+            src={gif}
+            alt="Animated GIF"
+            className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-52 lg:h-48"
+            width={200}
+            height={200}
+          />
+        </div>
+      </div>
+      <div className=" justify-center items-center flex">
+        <Content />
       </div>
     </>
   );
