@@ -55,7 +55,7 @@ const Home: NextPage = () => {
          <Image
           src={gif}
           alt="Animated GIF"
-          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-52 lg:h-48"
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-48 lg:h-48"
           width={200}
           height={200}
         />
