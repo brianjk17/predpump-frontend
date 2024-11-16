@@ -1,10 +1,12 @@
 import "../styles/globals.css";
+import "@coinbase/onchainkit/styles.css";
 import "@rainbow-me/rainbowkit/styles.css";
+
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import type { AppProps } from "next/app";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
 import { config } from "../wagmi";
 import Navbar from "../components/Navbar";
@@ -22,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
-        <RainbowKitProvider>
+        <RainbowKitProvider modalSize="compact">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <main className="min-w-full flex min-h-screen flex-col relative overflow-hidden">
               {/* Left glasses icon */}
