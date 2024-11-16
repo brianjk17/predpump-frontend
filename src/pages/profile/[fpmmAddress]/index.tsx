@@ -13,6 +13,7 @@ import { handleCheckCanResolve } from "../../../hooks/useCheckCanResolve";
 import { handleReport } from "../../../hooks/UseReport";
 import Marquee from "react-fast-marquee";
 import TransactionProgress from "../../../components/TransactionProgress";
+import { useGetTokenContract } from "../../../hooks/contracts/useGetTokenContract";
 
 interface Event {
   id: number;
@@ -26,13 +27,17 @@ interface Event {
 const Index = () => {
   const router = useRouter();
   const { fpmmAddress } = router.query;
+
   const [eventData, setEventData] = useState<Event | null>(null);
   const [funding, setFunding] = useState<string>("");
   const [canResolve, setCanResolve] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
   const [isProgressOpen, setIsProgressOpen] = useState<boolean>(false);
-  const { address } = useAccount(); // Add this to check if user is the deployer
+  const { address, chainId } = useAccount(); // Add this to check if user is the deployer
   
+  const { address: tokenContractAddress } = useGetTokenContract(
+    Number(chainId)
+  );
 
   const {
     data: hashApprove,
@@ -47,11 +52,12 @@ const Index = () => {
     setIsProgressOpen(true); // Add this line to open the modal
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
+    console.log(eventData);
     writeContractApprove({
-      address: TOKEN_CONTRACT.address,
+      address: tokenContractAddress,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "approve",
-      args: [eventData!.fpmm_address, amount],
+      args: [eventData?.fpmm_address, amount],
     });
   }
 
@@ -68,7 +74,7 @@ const Index = () => {
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
     writeContract({
-      address: eventData!.fpmm_address as `0x${string}`,
+      address: eventData?.fpmm_address as `0x${string}`,
       abi: fpmmAbi as Abi,
       functionName: "addFunding",
       args: [amount, [1, 1]],
@@ -167,47 +173,48 @@ const Index = () => {
       EVENTS
     </h1>
 
-    {/* Card Section */}
-    <div>
-      {/* Event Information */}
-      <div className="space-y-4 mb-8">
-        <Marquee className="bg-black/30 p-4 rounded-full">
-          <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-lime-300">
-            🚀 Title: {eventData?.fpmm_title || "Loading..."} 🌙
-          </div>
-        </Marquee>
+            {/* Card Section */}
+            <div>
+              {/* Event Information */}
+              <div className="space-y-4 mb-8">
+                <Marquee className="bg-black/30 p-4 rounded-full">
+                  <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-lime-300">
+                    🚀 Title: {eventData?.fpmm_title || "Loading..."} 🌙
+                  </div>
+                </Marquee>
 
-        <Marquee direction="right">
-          <div className="text-lg sm:text-2xl font-bold text-lime-300">
-            ⏰ Created: {eventData?.created_at
-              ? new Date(eventData.created_at).toLocaleDateString()
-              : "Loading..."}{" "}
-            (STILL EARLY!!!)
-          </div>
-        </Marquee>
-      </div>
+                <Marquee direction="right">
+                  <div className="text-lg sm:text-2xl font-bold text-lime-300">
+                    ⏰ Created:{" "}
+                    {eventData?.created_at
+                      ? new Date(eventData.created_at).toLocaleDateString()
+                      : "Loading..."}{" "}
+                    (STILL EARLY!!!)
+                  </div>
+                </Marquee>
+              </div>
 
-      {/* Funding Section */}
-      <div
-        className="bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400  
+              {/* Funding Section */}
+              <div
+                className="bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400  
                     space-y-6"
-      >
-        <h2
-          className="text-2xl md:text-4xl  font-extrabold text-center text-lime-300 
+              >
+                <h2
+                  className="text-2xl md:text-4xl  font-extrabold text-center text-lime-300 
                      animate-pulse press-start-2p-regular "
-        >
-          💸 Add Funding 💸
-        </h2>
+                >
+                  💸 Add Funding 💸
+                </h2>
 
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={funding}
-            onChange={(e) => setFunding(e.target.value)}
-            placeholder="Enter amount"
-            className="w-full bg-black/30 text-lg sm:text-xl p-4 sm:p-6 rounded-xl text-center 
+                <div className="space-y-4">
+                  <input
+                    type="number"
+                    value={funding}
+                    onChange={(e) => setFunding(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full bg-black/30 text-lg sm:text-xl p-4 sm:p-6 rounded-xl text-center 
                         border-4 border-lime-400 text-lime-300 placeholder-lime-600"
-          />
+                  />
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
@@ -230,63 +237,63 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Resolution Section */}
-      <div className="bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 mt-5">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4">
-          <h2 className="text-lg sm:text-xl font-semibold  press-start-2p-regular text-lime-400">
-            Resolve Event
-          </h2>
-          <div className="flex items-center gap-3">
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                canResolve
-                  ? "bg-green-100 text-green-800"
-                  : "bg-yellow-100 text-yellow-800"
-              }`}
-            >
-              {canResolve ? "Ready to Resolve" : "Not Ready"}
-            </span>
-            {!canResolve && (
-              <button
-                onClick={checkCanResolve}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-              >
-                Check Again
-              </button>
-            )}
-          </div>
-        </div>
+              {/* Resolution Section */}
+              <div className="bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 mt-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4">
+                  <h2 className="text-lg sm:text-xl font-semibold  press-start-2p-regular text-lime-400">
+                    Resolve Event
+                  </h2>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        canResolve
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {canResolve ? "Ready to Resolve" : "Not Ready"}
+                    </span>
+                    {!canResolve && (
+                      <button
+                        onClick={checkCanResolve}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        Check Again
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-        {address === eventData?.deployer ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => handleResolveEvent(1)}
-                disabled={!canResolve || isResolving}
-                className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white 
+                {address === eventData?.deployer ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button
+                        onClick={() => handleResolveEvent(1)}
+                        disabled={!canResolve || isResolving}
+                        className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white 
                            rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                Resolve as YES
-              </button>
-              <button
-                onClick={() => handleResolveEvent(0)}
-                disabled={!canResolve || isResolving}
-                className="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white 
+                      >
+                        Resolve as YES
+                      </button>
+                      <button
+                        onClick={() => handleResolveEvent(0)}
+                        disabled={!canResolve || isResolving}
+                        className="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white 
                            rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                Resolve as NO
-              </button>
+                      >
+                        Resolve as NO
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-gray-600 text-center">
+                      Only the event creator can resolve this event.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-gray-600 text-center">
-              Only the event creator can resolve this event.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
 
     {/* Bottom Ticker */}
     <Marquee className="mt-8 text-lg sm:text-2xl lg:text-4xl text-green-300">

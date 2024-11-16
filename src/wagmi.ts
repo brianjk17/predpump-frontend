@@ -9,6 +9,7 @@ import {
   scrollSepolia,
   morphHolesky,
   sepolia,
+  spicy,
 } from "wagmi/chains";
 import { http, cookieStorage, createConfig, createStorage } from "wagmi";
 import {
@@ -51,7 +52,6 @@ export const config = getDefaultConfig({
     scrollSepolia,
     morphHolesky,
     sepolia,
-    arbitrumSepolia
   ],
   ssr: true,
 });

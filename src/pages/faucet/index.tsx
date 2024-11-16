@@ -17,16 +17,17 @@ import {
   createSessionKeyEOA,
 } from "@biconomy/account";
 import { baseSepolia } from "@wagmi/core/chains";
+import { useGetTokenContract } from "../../hooks/contracts/useGetTokenContract";
 
 const index = () => {
-  const { address: walletAddress } = useAccount();
+  const { address: walletAddress, chainId } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
-
+  const { address: tokenAddress } = useGetTokenContract(Number(chainId));
   const withSponsorship = {
     paymasterServiceData: { mode: PaymasterMode.SPONSORED },
   };
@@ -68,7 +69,7 @@ const index = () => {
     console.log("transactionData", transactionData);
 
     const tx = {
-      to: TOKEN_CONTRACT.address,
+      to: tokenAddress,
       data: transactionData,
     };
 

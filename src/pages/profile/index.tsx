@@ -8,7 +8,7 @@ import { Event } from "../../types/types";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
 export default function index() {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [mybuys, setMyBuys] = useState<Event[]>([]);
   const [resolve, setResolve] = useState<Event[]>([]);
@@ -23,7 +23,8 @@ export default function index() {
       const { data, error } = await supabase
         .from("events")
         .select("*")
-        .eq("deployer", address);
+        .eq("deployer", address)
+        .eq("chainId", chainId);
 
       if (error) throw error;
 
