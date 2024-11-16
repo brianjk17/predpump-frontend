@@ -263,10 +263,11 @@ const event = () => {
   }, [router.query.id]);
 
   return (
-    <div className="flex flex-col items-center justify-center mt-10">
+    <div className="flex flex-col items-center justify-center mt-10 ">
       <div className=" flex flex-col justify-between gap-5">
-        <div className=" bg-teal-300 rounded-lg p-2">
-        <h1 className="text-xl pb-5 press-start-2p-regular rainbow-gradient md:text-2xl">
+        <div className="flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
+        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-center mb-10 animate-bounce
+                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white">
           {title}
         </h1>
 
@@ -274,8 +275,8 @@ const event = () => {
           <MarketDataDisplay marketAddress={id as `0x${string}`} />
         </div>
 
-        <div className="bg-teal-300 rounded-md p-2 min-w-[23rem] flex flex-col">
-          <div className="bg-white rounded-lg p-2 flex flex-col">
+        <div className="min-w-[23rem]flex-col flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
+
           <h1 className="text-xl mt-4 press-start-2p-regular">Outcome: </h1>
           <div className="w-full justify-center items-center flex gap-2">
             <button
@@ -299,12 +300,12 @@ const event = () => {
             value={amount}
             onChange={handleAmountChange}
             placeholder="Enter amount"
-            className="w-full p-2 rounded mb-4"
+            className="w-full p-2 rounded mb-4 text-black"
           />
 
-          <div>
+          <div className="item-center justify-center">
             {amount && amount !== "0" && (
-              <div className="bg-white rounded p-3 mb-4">
+              <div className=" bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl mb-4 ">
                 <h3 className="font-semibold mb-2">Transaction Preview</h3>
                 {isError ? (
                   <p className="text-sm text-red-500">
@@ -318,7 +319,7 @@ const event = () => {
                         ? formatTokenAmount(calculatedBuyAmount)
                         : "Calculating..."}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-white">
                       Price per token:{" "}
                       {calculatedBuyAmount && amount
                         ? `${(
@@ -333,14 +334,14 @@ const event = () => {
             )}
             <button
               onClick={handleApprove}
-              className="bg-teal-300 text-black px-4 py-2 rounded"
+              className="bg-teal-300 text-black px-4 py-2 rounded "
             >
               {isPendingApprove ? "Confirming..." : "Approve"}
             </button>
             <br />
             <br />
             <button
-              className={`w-full py-2 rounded ${
+              className={`w-full p-3 rounded ${
                 isBuy
                   ? "bg-teal-300 hover:bg-teal-600 text-black"
                   : "bg-red-500 hover:bg-red-600"
@@ -358,13 +359,12 @@ const event = () => {
             </button>
             </div>
           </div>
-        </div>
       </div>
 
       {canRedeem && (
-        <div className="w-full max-w-2xl mt-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-4">
+        <div className="flex mt-8 bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
+          <div className="bg-green-800 rounded-lg shadow p-6">
+            <div className="flex justify-between items-center mb-4 gap-2">
               <h2 className="text-xl font-semibold">Redeem Positions</h2>
               <button
                 onClick={() => setShowRedeemSection(!showRedeemSection)}
@@ -376,7 +376,7 @@ const event = () => {
 
             {showRedeemSection && (
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
+                <div className="bg-green-800 p-4 rounded-lg text-sm space-y-2">
                   <p>Status: Market Resolved</p>
                   <p>
                     Is Reported: {debugInfo.condition.isReported ? "Yes" : "No"}
@@ -428,8 +428,8 @@ const event = () => {
       {/* Show message if redemption is not available */}
       {!canRedeem && debugInfo.condition && (
         <div className="w-full max-w-2xl mt-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-center text-gray-600">
+          <div className="bg-green-800 rounded-lg shadow p-6">
+            <div className="text-center text-white">
               <h2 className="text-xl font-semibold mb-2">
                 Redemption Not Available Yet
               </h2>

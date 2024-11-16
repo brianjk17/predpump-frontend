@@ -12,6 +12,7 @@ module.exports = {
   darkMode: "class", // Enable dark mode
   theme: {
     extend: {
+      
       colors: {
         darkgreen: "#022926", // Add your custom color
       },

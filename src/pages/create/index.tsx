@@ -137,9 +137,10 @@ export default function index() {
 
   return (
     <div className="flex flex-col justify-center items-center  min-h-[50vh]">
-      <div className="flex flex-col justify-center items-center bg-white w-[500px] rounded-md p-5">
-        <div className="press-start-2p-regular">Create a Prediction Market</div>
-        <div> Predict the future, earn more, rule the markets!</div>
+      <div className="press-start-2p-regular text-xl md:text-4xl items-center justify-center  font-extrabold text-center mb-10 animate-bounce
+                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white">Create a Prediction Market</div>
+      <div className="flex flex-col justify-center items-center bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl">
+        <div className="press-start-2p-regular text-xl"> Predict the future, earn more, rule the markets!</div>
         <div className="text-teal-300 my-2 bg-slate-50 w-full">
           <TextField
             id="outlined-controlled"
@@ -156,18 +157,19 @@ export default function index() {
         </div>
 
         <div className="flex flex-col items-center space-y-4 pb-5">
-          <label className="text-gray-700 font-medium">
+          <label className="text-lime-300 font-medium">
             Select Date and Time:
           </label>
           <DateTimePicker
             label="End Date"
             value={selectedDate}
             onChange={(value) => setSelectedDate(value)}
+            className="border-white"
           />
         </div>
 
         <button
-          className="bg-teal-300 text-black hover:bg-teal-700 hover:text-white p-2 rounded-lg"
+          className="bg-green-800/50 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl hover:bg-teal-700 hover:text-white p-2"
           onClick={handleDeployPrediction}
           disabled={
             isPending || isStoringData || !selectedDate || question.length < 1
@@ -181,7 +183,7 @@ export default function index() {
         </button>
 
         {isConfirming && hash && (
-          <div>
+          <div className="m-2">
             <div>Waiting for confirmation...</div>
             <Link
               href={`https://arbitrum-sepolia.blockscout.com/tx/${hash}`}
@@ -216,36 +218,47 @@ export default function index() {
       </div>
 
       {isConfirmed && selectedDate && (
-        <div className="flex justify-center items-center flex-col">
-          <div
-            className="flex flex-col justify-center items-center bg-white w-[500px] rounded-md p-5 mt-10"
-            onClick={() => router.push(`/profile/${fpmmAddress}`)}
-          >
-            <div className="press-start-2p-regular">
-              Prediction Market created
-            </div>
+<div className="flex justify-center items-center flex-wrap bg-green-800/50 p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-8">
+  {/* Card */}
+  <div
+    className="flex flex-col justify-center items-center bg-green-800/50 w-full md:w-[500px] rounded-md p-5 mt-10"
+    onClick={() => router.push(`/profile/${fpmmAddress}`)}
+  >
+    {/* Title */}
+    <div className="press-start-2p-regular text-center text-lg sm:text-xl md:text-2xl">
+      Prediction Market Created
+    </div>
 
-            <div className="items-center justify-center">
-              <div className="bg-white/10 p-3 rounded-lg">{question}</div>
-              <div>End Date :{selectedDate.format("MMMM D, YYYY h:mm A")}</div>
-            </div>
+    {/* Question Section */}
+    <div className="mt-4 text-center">
+      <div className="bg-white/10 p-3 rounded-lg text-sm sm:text-base md:text-lg">
+        {question}
+      </div>
+      <div className="mt-2 text-sm sm:text-base md:text-lg">
+        End Date: {selectedDate.format("MMMM D, YYYY h:mm A")}
+      </div>
+    </div>
 
-            <Button
-              onClick={() => router.push(`/profile/${fpmmAddress}`)}
-              className=""
-            >
-              Proceed to approve
-            </Button>
-          </div>
+    {/* Button */}
+    <Button
+      onClick={() => router.push(`/profile/${fpmmAddress}`)}
+      className="mt-6 px-4 py-2 text-sm sm:text-base md:text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+    >
+      Proceed to Approve
+    </Button>
+  </div>
 
-          <Link
-            href={`https://arbitrum-sepolia.blockscout.com/address/${fpmmAddress}`}
-            target="_blank"
-            className="underline text-white"
-          >
-            View Contract on Explorer
-          </Link>
-        </div>
+  {/* Link Section */}
+  <div className="mt-6 w-full text-center">
+    <Link
+      href={`https://arbitrum-sepolia.blockscout.com/address/${fpmmAddress}`}
+      target="_blank"
+      className="underline text-white text-sm sm:text-base md:text-lg"
+    >
+      View Contract on Explorer
+    </Link>
+  </div>
+</div>
       )}
     </div>
   );
