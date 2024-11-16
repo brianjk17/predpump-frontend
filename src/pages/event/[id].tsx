@@ -127,8 +127,9 @@ const event = () => {
     // Convert input amount to 18 decimal places
     const amounts = BigInt(parseFloat(amount) * 10 ** 18);
     writeContractApprove({
-      address: CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG]
-        .contractAddress.token_address as `0x${string}`,
+      address:
+        CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
+          .token_address,
       abi: TOKEN_CONTRACT.abi as Abi,
       functionName: "approve",
       args: [id as `0x${string}`, amounts],

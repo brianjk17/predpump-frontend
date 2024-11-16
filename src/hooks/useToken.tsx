@@ -8,7 +8,7 @@ export default function useToken() {
   const { address: ownerAddress, chainId } = useAccount();
 
   const { data: walletBalanceData, refetch: refetchBalance } = useReadContract({
-    chainId: chainId ?? 1,
+    chainId: chainId,
     address: useGetTokenContract(chainId ?? 11155111).address,
     abi: tokenAbi,
     functionName: "balanceOf",

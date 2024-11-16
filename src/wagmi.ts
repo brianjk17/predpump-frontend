@@ -1,16 +1,11 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import {
   Chain,
-  arbitrum,
   arbitrumSepolia,
-  base,
   baseSepolia,
   flowTestnet,
-  mainnet,
-  mantaSepoliaTestnet,
+  mantleSepoliaTestnet,
   morphSepolia,
-  optimism,
-  polygon,
   sepolia,
   spicy,
 } from "wagmi/chains";
@@ -37,7 +32,7 @@ export const config = getDefaultConfig({
     arbitrumSepolia,
     sepolia,
     baseSepolia,
-    mantaSepoliaTestnet,
+    mantleSepoliaTestnet,
     flowTestnet,
     morphSepolia,
     spicy,

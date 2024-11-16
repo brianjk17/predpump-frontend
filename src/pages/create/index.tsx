@@ -17,6 +17,7 @@ import confetti from "canvas-confetti";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CHAINS_CONFIG } from "../../constants/chains";
+import { useFactoryContract } from "../../hooks/contracts/useFactoryContract";
 
 export default function index() {
   const [question, setQuestion] = useState("");
@@ -27,6 +28,8 @@ export default function index() {
   const [isMounted, setIsMounted] = useState(false); // Flag to track if the component has mounted
   const { address, chainId } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
+
+  const { address: factoryContractAddress } = useFactoryContract(chainId ?? 1);
 
   const router = useRouter();
 
@@ -63,16 +66,11 @@ export default function index() {
   //   CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
   //     .token_address
   // );
-
-  console.log(
-    CHAINS_CONFIG[chainId as keyof typeof CHAINS_CONFIG].contractAddress
-      .token_address
-  );
   function handleDeployPrediction() {
     if (selectedDate) {
       const epochSeconds = selectedDate.unix();
       writeContract({
-        address: FACTORY_CONTRACT.address,
+        address: factoryContractAddress,
         abi: FACTORY_CONTRACT.abi as Abi,
         functionName: "createFPMM",
         args: [
