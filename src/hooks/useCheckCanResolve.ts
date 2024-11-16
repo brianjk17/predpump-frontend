@@ -1,29 +1,34 @@
 import { ethers } from "ethers";
-import FpmmABI from "../contracts/fpmm/fpmmAbi.json"
-import ConditionalTokensABI from "../contracts/ctf/ConditionalTokens.json"
+import FpmmABI from "../contracts/fpmm/fpmmAbi.json";
+import ConditionalTokensABI from "../contracts/ctf/ConditionalTokens.json";
 
-export const handleCheckCanResolve = async(address: string, deployer: string, questionId: string, outcomeSlots: number) => {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = provider.getSigner();
-      
-            const fpmm = new ethers.Contract(
-              address,
-              FpmmABI,
-              provider
-            );
+export const handleCheckCanResolve = async (
+  address: string,
+  deployer: string,
+  questionId: string,
+  outcomeSlots: number
+) => {
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const signer = provider.getSigner();
 
-            const conditionalToken = await fpmm.conditionalTokens();
-            console.log(conditionalToken);
+  const fpmm = new ethers.Contract(address, FpmmABI, provider);
 
-            const conditionalTokens = new ethers.Contract(
-                conditionalToken,
-                ConditionalTokensABI.abi,
-                provider
-            );
+  const conditionalToken = await fpmm.conditionalTokens();
+  console.log(conditionalToken);
 
-            const conditionalId = await conditionalTokens.getConditionId(address, questionId, outcomeSlots);
+  const conditionalTokens = new ethers.Contract(
+    conditionalToken,
+    ConditionalTokensABI.abi,
+    provider
+  );
 
-            const canResolve = await conditionalTokens.canReport(conditionalId);
+  const conditionalId = await conditionalTokens.getConditionId(
+    address,
+    questionId,
+    outcomeSlots
+  );
 
-            return canResolve;
-}
+  const canResolve = await conditionalTokens.canReport(conditionalId);
+
+  return canResolve;
+};
