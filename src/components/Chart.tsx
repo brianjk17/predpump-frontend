@@ -118,14 +118,14 @@ const MarketDataDisplay: React.FC<MarketDataDisplayProps> = ({ marketAddress }) 
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            {/* <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Share Price:</span>
                 <span className="font-medium">
                   {formatSharePrice(prices.sharePrice)} tokens
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

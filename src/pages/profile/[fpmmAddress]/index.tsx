@@ -12,6 +12,7 @@ import fpmmAbi from "../../../contracts/fpmm/fpmmAbi.json";
 import { handleCheckCanResolve } from "../../../hooks/useCheckCanResolve";
 import { handleReport } from "../../../hooks/UseReport";
 import Marquee from "react-fast-marquee";
+import TransactionProgress from "../../../components/TransactionProgress";
 
 interface Event {
   id: number;
@@ -29,7 +30,9 @@ const Index = () => {
   const [funding, setFunding] = useState<string>("");
   const [canResolve, setCanResolve] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
+  const [isProgressOpen, setIsProgressOpen] = useState<boolean>(false);
   const { address } = useAccount(); // Add this to check if user is the deployer
+  
 
   const {
     data: hashApprove,
@@ -41,6 +44,7 @@ const Index = () => {
       hash: hashApprove,
     });
   function handleApprove() {
+    setIsProgressOpen(true); // Add this line to open the modal
     // Convert input amount to 18 decimal places
     const amount = BigInt(parseFloat(funding) * 10 ** 18);
     writeContractApprove({
@@ -147,6 +151,8 @@ const Index = () => {
     }
   }, [eventData]);
 
+  
+
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 ">
 
@@ -205,16 +211,16 @@ const Index = () => {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button
+            {/* <button
               onClick={handleApprove}
               className="flex-1 p-4 text-lg sm:text-xl font-bold bg-blue-500 rounded-xl 
                          border-4 border-blue-300 hover:animate-spin"
             >
               {isPendingApprove ? "LOADING..." : "APPROVE 🚀"}
-            </button>
+            </button> */}
 
             <button
-              onClick={handleFunding}
+              onClick={handleApprove}
               className="flex-1 p-4 text-lg sm:text-xl font-bold bg-yellow-400 rounded-xl 
                          border-4 border-yellow-300 hover:animate-bounce"
             >
@@ -290,6 +296,19 @@ const Index = () => {
 </div>
 
 )}
+<TransactionProgress 
+      isOpen={isProgressOpen}
+      onClose={() => setIsProgressOpen(false)}
+      amount={funding}
+      isPendingApprove={isPendingApprove}
+      isConfirmingApprove={isConfirmingApprove}
+      isConfirmedApproved={isConfirmedApproved}
+      isPendingFunding={isPending}
+      isConfirmingFunding={isConfirming}
+      isConfirmedFunding={isConfirmed}
+      onApprove={handleApprove}
+      onFunding={handleFunding}
+    />
  
 
  </div>
