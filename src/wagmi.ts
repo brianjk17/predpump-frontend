@@ -1,14 +1,25 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import {
   Chain,
   arbitrum,
   arbitrumSepolia,
   base,
+  baseSepolia,
   mainnet,
   optimism,
   polygon,
   sepolia,
 } from "wagmi/chains";
+import { http, cookieStorage, createConfig, createStorage } from "wagmi";
+import {
+  RainbowKitProvider,
+  connectorsForWallets,
+  getDefaultConfig,
+} from "@rainbow-me/rainbowkit";
+import {
+  metaMaskWallet,
+  rainbowWallet,
+  coinbaseWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 
 // Define Anvil chain
 const anvil: Chain = {
@@ -25,13 +36,28 @@ const anvil: Chain = {
   },
 };
 
-export const config = getDefaultConfig({
-  appName: "RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
-  chains: [
-    anvil,
-    sepolia,
-    arbitrumSepolia
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended Wallet",
+      wallets: [coinbaseWallet],
+    },
+    {
+      groupName: "Other Wallets",
+      wallets: [rainbowWallet, metaMaskWallet],
+    },
   ],
-  ssr: true,
+  {
+    appName: "PredPump",
+    projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
+  }
+);
+
+export const config = getDefaultConfig({
+  appName: "PredPump",
+  // @ts-ignore
+  connectors,
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
+  chains: [base],
+  ssr: true, // If your dApp uses server side rendering (SSR)
 });
