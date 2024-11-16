@@ -54,6 +54,8 @@ export default function index() {
         {
           fpmm_address: fpmmAddress,
           fpmm_title: question,
+          deployer: address,
+          questionId: questionId
         },
       ]);
 
