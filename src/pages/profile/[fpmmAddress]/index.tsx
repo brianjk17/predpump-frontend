@@ -222,7 +222,7 @@ const Index = () => {
             <button
               onClick={handleApprove}
               className="flex-1 p-4 text-lg sm:text-xl font-bold bg-yellow-400 rounded-xl 
-                         border-4 border-yellow-300 hover:animate-bounce"
+                         border-4 border-yellow-300"
             >
               {isPending ? "PROCESSING..." : "SEND IT 🌙"}
             </button>

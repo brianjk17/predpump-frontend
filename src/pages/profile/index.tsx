@@ -157,6 +157,10 @@ export default function index() {
     router.push(`/profile/${fpmm_address}`);
   }
 
+  function handleClickTxn(fpmm_address: string) {
+    router.push(`/event/${fpmm_address}`);
+  }
+
   useEffect(() => {
     if (address) {
       fetchMyEvents();
@@ -230,7 +234,7 @@ export default function index() {
 
                 <div className="flex gap-2 flex-wrap justify-center items-center">
                   {mybuys.map((event, index) => (
-                    <div key={index} onClick={() => handleClick(event.address)}>
+                    <div key={index} onClick={() => handleClickTxn(event.address)}>
                       <EventCard eventData={event} />
                     </div>
                   ))}
@@ -251,7 +255,7 @@ export default function index() {
 
                 <div className="flex gap-2 flex-wrap justify-center items-center">
                   {resolve.map((event, index) => (
-                    <div key={index} onClick={() => handleClick(event.address)}>
+                    <div key={index} onClick={() => handleClickTxn(event.address)}>
                       <EventCard eventData={event} />
                     </div>
                   ))}
