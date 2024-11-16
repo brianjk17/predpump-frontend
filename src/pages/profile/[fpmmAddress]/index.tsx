@@ -156,7 +156,7 @@ const Index = () => {
     {/* Title Section */}
     <h1
       className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-center mb-10 animate-bounce
-                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white"
+                 [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white press-start-2p-regular"
     >
       EVENTS
     </h1>
