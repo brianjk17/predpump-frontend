@@ -4,6 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useGetAllEvents } from "../../hooks/useGetAllEvent";
 import { useRouter } from "next/router";
 import { useGetEvent } from "../../hooks/useGetEvent";
+import { Config, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { WriteContractMutate } from "wagmi/query";
+import FpmmABI from "../../contracts/fpmm/fpmmAbi.json"
+import { handleBuy } from "../../hooks/useBuy";
+import { Abi, formatUnits, parseUnits } from "viem";
+import { TOKEN_CONTRACT } from "../../contracts";
 
 interface OutcomeData {
   id: string;
@@ -23,11 +29,55 @@ const event = () => {
   const [choice, setChoice] = useState(""); //
   const [isBuy, setIsBuy] = useState(true); //buy or sell
   const [position, setPosition] = useState(1); //1 for yes, 0 for no
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<string>("0");
+  const [isApproved, setIsApproved] = useState(false);
+  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS as `0x${string}`;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(e.target.value);
+    const value = e.target.value;
+    if (!isNaN(Number(value)) && value !== "") {
+      setAmount(value);
+    } else {
+      setAmount("0");
+    }
   };
+
+  const { data: hash, isPending, writeContract } = useWriteContract();
+  const {
+    data: receipt,
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+  } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  const {
+    data: hashApprove,
+    isPending: isPendingApprove,
+    writeContract: writeContractApprove,
+  } = useWriteContract();
+
+   // Calculate buy amount based on current input
+   const { data: calculatedBuyAmount, isError } = useReadContract({
+    address: "0x569213644d0b75681994af0786de877fd993a977" as `0x${string}`,
+    abi: FpmmABI,
+    functionName: "calcBuyAmount",
+    args: amount && amount !== "0" ? [
+      parseUnits(amount, 18),
+      BigInt(position)
+    ] : undefined,
+  });
+
+  function handleApprove() {
+    // Convert input amount to 18 decimal places
+    const amounts = BigInt(parseFloat(amount) * 10 ** 18);
+    writeContractApprove({
+      address: TOKEN_CONTRACT.address,
+      abi: TOKEN_CONTRACT.abi as Abi,
+      functionName: "approve",
+      args: ["0x569213644d0b75681994af0786de877fd993a977", amounts],
+    });
+  }
 
   const ChoiceButton = ({
     choice,
@@ -59,6 +109,17 @@ const event = () => {
   useEffect(() => {
     event.choices.length > 1 && setChoice(event.choices[0]);
   }, []);
+
+  const formatTokenAmount = (amount: unknown) => {
+    if (!amount) return "0";
+    try {
+      return formatUnits(BigInt(amount.toString()), 18);
+    } catch {
+      return "0";
+    }
+  };
+  
+  
   return (
     <div className="flex flex-col items-center justify-center mt-10">
       <div className=" flex justify-between gap-5">
@@ -99,12 +160,12 @@ const event = () => {
                       <ChoiceButton
                         choice={choice}
                         isBuy={isBuy}
-                        position={1}
+                        position={0}
                       />
                       <ChoiceButton
                         choice={choice}
                         isBuy={isBuy}
-                        position={2}
+                        position={1}
                       />
                     </div>
                   </div>
@@ -163,24 +224,67 @@ const event = () => {
             className="w-full p-2 rounded mb-4"
           />
           <div>
-            <Button
+          {amount && amount !== "0" && (
+  <div className="bg-white rounded p-3 mb-4">
+    <h3 className="font-semibold mb-2">Transaction Preview</h3>
+    {isError ? (
+      <p className="text-sm text-red-500">Error calculating amount. Please try again.</p>
+    ) : (
+      <div className="space-y-1">
+        <p className="text-sm">Tokens to receive: {
+          calculatedBuyAmount 
+            ? formatTokenAmount(calculatedBuyAmount)
+            : "Calculating..."
+        }</p>
+        <p className="text-xs text-gray-500">
+          Price per token: {
+            calculatedBuyAmount && amount
+              ? `${(Number(amount) / Number(formatTokenAmount(calculatedBuyAmount))).toFixed(4)} USDC`
+              : "Calculating..."
+          }
+        </p>
+      </div>
+    )}
+  </div>
+)}
+            {/* <Button
               variant="contained"
               className={`text-black w-full py-2 rounded ${
                 isBuy
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-red-500 hover:bg-red-600"
               }`}
-              onClick={() => {
-                console.log(
-                  choice,
-                  isBuy ? "Buy" : "Sell",
-                  position === 1 ? "Yes" : "No",
-                  amount
-                );
+              onClick={async() => {
+                // console.log(
+                //   choice,
+                //   isBuy ? "Buy" : "Sell",
+                //   position === 1 ? "Yes" : "No",
+                //   amount
+                // );
+                console.log(calBuy);
+                handleBuy(writeContract, "0x8ff3801288a85ea261e4277d44e1131ea736f77b", position, amount);
               }}
             >
               Confirm {isBuy ? "Buy" : "Sell"} {position === 1 ? "Yes" : "No"}
-            </Button>
+            </Button> */}
+            <button
+                onClick={handleApprove}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                {isPendingApprove ? "Confirming..." : "Approve"}
+              </button>
+            <Button
+            variant="contained"
+            className={`w-full py-2 rounded ${
+              isBuy
+                ? "bg-blue-500 hover:bg-blue-600"
+                : "bg-red-500 hover:bg-red-600"
+            }`}
+            disabled={!amount || amount === "0" || isPending || isConfirming}
+            onClick={() => handleBuy(writeContract, "0x569213644d0b75681994af0786de877fd993a977", position, amount)}
+          >
+            {isPending || isConfirming ? "Confirming..." : `Confirm ${isBuy ? "Buy" : "Sell"} ${position === 1 ? "Yes" : "No"}`}
+          </Button>
           </div>
         </div>
       </div>

@@ -22,7 +22,7 @@ export default function Navbar() {
         <div className="hidden md:flex flex-row justify-center items-center gap-5 text-teal-300">
           <Link href="/profile">[View Profile]</Link>
           <Link href="/create">[Create Bets]</Link>
-          <div>[{Number(userBalance)} USDC]</div>
+          <div>[{(Number(userBalance)/(10**18)).toLocaleString()} USDC]</div>
           <ConnectButton showBalance={false} />
         </div>
 

@@ -1,8 +1,7 @@
 // index.tsx
 import type { NextPage } from "next";
 import React from "react";
-import { Boxes } from "./components/ui/background-boxes";
-import { cn } from "../../lib/utils";
+import { Boxes } from "../components/ui/background-boxes";
 import Image from "next/image";
 import gif from "../public/pepe-gif.gif";
 import EventCard from "../components/EventCard/EventCard";
@@ -10,13 +9,21 @@ import { useGetAllEvents } from "../hooks/useGetAllEvent";
 import Link from "next/link";
 
 const Home: NextPage = () => {
-  const { allEvents } = useGetAllEvents();
+  const { allEvents, isLoading, error } = useGetAllEvents();
+
+  if (isLoading) {
+    return <div>Loading events...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
       <div className="h-full relative w-full overflow-hidden bg-darkgreen items-center flex justify-center rounded-lg">
         <div className="absolute inset-0 w-full h-full bg-darkgreen [mask-image:radial-gradient(transparent,white)] pointer-events-none z-0" />
-        
+
         <Boxes className="h-auto" />
 
         {/* Flex container for "hey" elements and PredPumpFun */}
@@ -42,11 +49,15 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex flex-wrap gap-7 mt-14 items-center justify-center">
-        {allEvents.map((event) => (
-          <Link href={`/event/${event.id}`} key={event.id}>
+        {allEvents.length === 0 ? (
+          <div>No events found</div>
+        ) : (
+          allEvents.map((event) => (
+            <Link href={`/event/${event.address}`} key={event.address}>
               <EventCard eventData={event} />
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </div>
     </>
   );
