@@ -36,7 +36,7 @@ const Home: NextPage = () => {
           height={200}
         />
           <div className="press-start-2p-regular text-white md:text-5xl text-2xl">
-            PredPump
+            PREDPUMP
           </div>
           <Image
             src={gif}
