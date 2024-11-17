@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import FpmmABI from "../contracts/fpmm/fpmmAbi.json";
-import ConditionalTokensABI from "../contracts/ctf/ConditionalTokens.json";
-
+import { conditionalTokensABI } from "../contracts/Ctf/ConditionalTokensABI";
 
 export const handleCheckCanResolve = async (
   address: string,
@@ -19,7 +18,7 @@ export const handleCheckCanResolve = async (
 
   const conditionalTokens = new ethers.Contract(
     conditionalToken,
-    ConditionalTokensABI.abi,
+    conditionalTokensABI,
     provider
   );
 
@@ -38,7 +37,7 @@ export const handleCheckCanResolve = async (
   );
 
   const info = await conditionalTokens.conditionInfo(conditionalId2);
-  console.log("info", info)
+  console.log("info", info);
 
   return canResolve;
 };
