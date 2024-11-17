@@ -62,3 +62,6 @@ At **PredPump**, we believe prediction markets should be open to everyone and ea
 ### Chiliz 
 #### [Mock USDC](https://api.routescan.io/v2/network/testnet/evm/88882/address/0x493da5fba9eb0f8770a0762f1ed0f9ffaebe05db)
 #### [CTF Factory](https://api.routescan.io/v2/network/testnet/evm/88882/address/0x68057073666e9f2fb879bcfdd8971cc8dfa9a9e8)
+
+### Scroll
+#### [Mock USDC](https://sepolia.scrollscan.com/address/0xe0CF0AbBbF9190f8C772501628485bbDea2BC3a9)
