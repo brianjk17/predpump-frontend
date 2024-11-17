@@ -2,6 +2,7 @@
 
 PredPump is an open prediction market that allows everyone to create and vote on bets, ensuring a free and decentralized prediction market.
 
+[🔗Link to the live dapp🔗](https://predpump.wtf/)
 ---
 
 ## ‼️ Problem Statement
