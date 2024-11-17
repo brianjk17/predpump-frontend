@@ -8,8 +8,6 @@ import {
   flowTestnet,
   scrollSepolia,
   morphHolesky,
-  sepolia,
-  spicy,
 } from "wagmi/chains";
 import { http, cookieStorage, createConfig, createStorage } from "wagmi";
 import {
@@ -39,24 +37,24 @@ const connectors = connectorsForWallets(
 
 export const chilizSpicyTestnet = {
   id: 88_882,
-  name: 'Chiliz Spicy Testnet',
+  name: "Chiliz Spicy Testnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'CHZ',
-    symbol: 'CHZ',
+    name: "CHZ",
+    symbol: "CHZ",
   },
   rpcUrls: {
     default: {
-      http: ['https://spicy-rpc.chiliz.com/'],
+      http: ["https://spicy-rpc.chiliz.com/"],
     },
     public: {
-      http: ['https://spicy-rpc.chiliz.com/'],
+      http: ["https://spicy-rpc.chiliz.com/"],
     },
   },
   blockExplorers: {
     default: {
-      name: 'ChilizScan Testnet',
-      url: 'https://spicy-explorer.chiliz.com',
+      name: "ChilizScan Testnet",
+      url: "https://spicy-explorer.chiliz.com",
     },
   },
   testnet: true,
@@ -77,7 +75,7 @@ export const config = getDefaultConfig({
     flowTestnet,
     scrollSepolia,
     morphHolesky,
-    sepolia,
+    arbitrumSepolia,
   ],
   ssr: true,
 });

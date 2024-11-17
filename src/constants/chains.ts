@@ -16,7 +16,7 @@ export const CHAINS_CONFIG = {
       factory_address: process.env.NEXT_PUBLIC_FACTORY_BASE as `0x${string}`,
     },
   },
-  // mantle 
+  // mantle
   [5003]: {
     scan: "https://explorer.sepolia.mantle.xyz/",
     contractAddress: {
@@ -33,7 +33,7 @@ export const CHAINS_CONFIG = {
     },
   },
   // morph
-  [2710]: {
+  [2810]: {
     scan: "https://explorer-api-holesky.morphl2.io/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_MORPH as `0x${string}`,
@@ -42,7 +42,7 @@ export const CHAINS_CONFIG = {
   },
   // chiliz
   [88_882]: {
-    scan: "https://explorer.chiliz.com/",
+    scan: "https://testnet.chiliscan.com//",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_CHILIZ as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_CHILIZ as `0x${string}`,
