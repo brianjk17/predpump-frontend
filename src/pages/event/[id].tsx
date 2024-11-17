@@ -84,6 +84,9 @@ const event = () => {
   const [title, setTitle] = useState("");
 
   const { data: hash, isPending, writeContract } = useWriteContract();
+
+  const { address: tokenAdress } = useGetTokenContract(Number(chainId));
+
   const {
     data: receipt,
     isLoading: isConfirming,
@@ -344,8 +347,6 @@ const event = () => {
     }
   };
 
-  const { address: tokenAdress } = useGetTokenContract(Number(chainId));
-
   function handleApprove() {
     // Convert input amount to 18 decimal places
     const amounts = BigInt(parseFloat(amount) * 10 ** 18);
@@ -485,7 +486,7 @@ const event = () => {
         {/* Title and Chart Section */}
         <div className="flex justify-center items-center flex-wrap bg-green-800/50 p-4 sm:p-6 rounded-3xl border-4 border-dashed border-lime-400 text-white text-xl my-4 sm:my-8 w-full">
           <h1 className="text-3xl sm:text-5xl lg:text-8xl font-extrabold text-center mb-6 sm:mb-10 animate-bounce [text-shadow:_4px_4px_0_lime,_8px_8px_0_green] text-white w-full">
-            {title}
+            {marketState.title}
           </h1>
           <div className="w-full overflow-x-auto">
             <MarketDataDisplay marketAddress={fpmmId as `0x${string}`} />
