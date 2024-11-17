@@ -42,10 +42,19 @@ export const CHAINS_CONFIG = {
   },
   // chiliz
   [88_882]: {
-    scan: "https://testnet.chiliscan.com//",
+    scan: "https://testnet.chiliscan.com/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_CHILIZ as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_CHILIZ as `0x${string}`,
+    },
+  },
+
+  // scroll
+  [534_351]: {
+    scan: "https://sepolia.scrollscan.com/",
+    contractAddress: {
+      token_address: process.env.NEXT_PUBLIC_TOKEN_SCROLL as `0x${string}`,
+      factory_address: process.env.NEXT_PUBLIC_FACTORY_SCROLL as `0x${string}`,
     },
   },
 };
