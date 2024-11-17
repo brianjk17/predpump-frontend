@@ -23,6 +23,10 @@ Prediction markets often fail to address real-world needs due to unnecessary res
 At **PredPump**, we believe prediction markets should be open to everyone and easy to use. Our vision is to let everyone to create markets on any topic they care about, free from restrictions and technical hurdles, no need worried about the data. We’re building a platform where users have control, and where fairness and transparency are at the core of every interaction. Our ultimate goal is to make prediction markets fun, flexible, and accessible to all.
 
 ---
+## User Flow
+<img width="672" alt="image" src="https://github.com/user-attachments/assets/e2082b9a-4b10-4f19-a8f6-9b0dd56127ad">
+
+---
 
 ## The Stack
 
