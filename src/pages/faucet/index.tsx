@@ -9,14 +9,14 @@ import { Abi } from "viem";
 import useToken from "../../hooks/useToken";
 import { useGetTokenContract } from "../../hooks/contracts/useGetTokenContract";
 
-const index = () => {
-  const { address,chainId } = useAccount();
+const Faucet = () => {
+  const { address, chainId } = useAccount();
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
-  const {address: tokenAddress}=useGetTokenContract(Number(chainId))
+  const { address: tokenAddress } = useGetTokenContract(Number(chainId));
 
   function handleMint() {
     writeContract({
@@ -29,7 +29,7 @@ const index = () => {
 
   return (
     <div>
-      <button onClick={handleMint} className=" bg-zinc-50">
+      <button onClick={handleMint} className=" bg-zinc-50 p-4 rounded-xl">
         {isPending ? "Confirming..." : "mint"}
       </button>
       {isConfirming && <div>Waiting for confirmation...</div>}
@@ -38,4 +38,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Faucet;

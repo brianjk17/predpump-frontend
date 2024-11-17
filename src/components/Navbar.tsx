@@ -3,6 +3,7 @@ import React from "react";
 import useToken from "../hooks/useToken";
 import Link from "next/link";
 import { LuAlignJustify, LuMinus } from "react-icons/lu";
+import Faucet from "../pages/faucet";
 
 export default function Navbar() {
   const { userBalance } = useToken();
@@ -22,6 +23,7 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex flex-row justify-center items-center gap-5 text-teal-300">
+          <Link href="/faucet">[Faucet]</Link>
           <Link href="/profile">[View Profile]</Link>
           <Link href="/create">[Create Bets]</Link>
           <div>[{(Number(userBalance) / 10 ** 18).toLocaleString()} USDC]</div>
