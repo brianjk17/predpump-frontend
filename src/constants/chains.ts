@@ -16,9 +16,9 @@ export const CHAINS_CONFIG = {
       factory_address: process.env.NEXT_PUBLIC_FACTORY_BASE as `0x${string}`,
     },
   },
-  // mantle
+  // mantle 
   [5003]: {
-    scan: "https://arbitrum-sepolia.blockscout.com/",
+    scan: "https://explorer.sepolia.mantle.xyz/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_MANTLE as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_MANTLE as `0x${string}`,
@@ -26,7 +26,7 @@ export const CHAINS_CONFIG = {
   },
   // flow
   [545]: {
-    scan: "https://arbitrum-sepolia.blockscout.com/",
+    scan: "https://testnet.flowdiver.io/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_FLOW as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_FLOW as `0x${string}`,
@@ -42,7 +42,7 @@ export const CHAINS_CONFIG = {
   },
   // chiliz
   [88_882]: {
-    scan: "https://arbitrum-sepolia.blockscout.com/",
+    scan: "https://explorer.chiliz.com/",
     contractAddress: {
       token_address: process.env.NEXT_PUBLIC_TOKEN_CHILIZ as `0x${string}`,
       factory_address: process.env.NEXT_PUBLIC_FACTORY_CHILIZ as `0x${string}`,
