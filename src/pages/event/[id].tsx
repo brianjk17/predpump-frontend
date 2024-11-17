@@ -392,7 +392,7 @@ const event = () => {
         abi: conditionalTokensABI,
         functionName: "redeemPositions",
         args: [
-          process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS,
+          tokenAdress,
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           conditionalId,
           indexSets,

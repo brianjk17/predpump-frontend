@@ -9,12 +9,13 @@ import { formatUnits, parseUnits } from "viem";
 import { conditionalTokensABI } from "../../contracts/Ctf/ConditionalTokensABI";
 import FpmmABI from "../../contracts/fpmm/fpmmAbi.json";
 import { ethers } from "ethers";
+import { useGetTokenContract } from "../../hooks/contracts/useGetTokenContract";
 
 const RedeemPayouts = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const [loading, setLoading] = useState(false);
   const [claimableAmount, setClaimableAmount] = useState(BigInt(0));
-
+  const { address: tokenAdress } = useGetTokenContract(Number(chainId));
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -74,7 +75,7 @@ const RedeemPayouts = () => {
         abi: conditionalTokensABI,
         functionName: "redeemPositions",
         args: [
-          process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS,
+          tokenAdress,
           "0x0000000000000000000000000000000000000000000000000000000000000000", // parentCollectionId as bytes32(0)
           conditionalId, // Make sure to set this in your .env
           indexSets,
